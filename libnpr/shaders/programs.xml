@@ -1,0 +1,220 @@
+<!--
+
+programs.xml
+Author: Forrester Cole (fcole@cs.princeton.edu)
+Copyright (c) 2009 Forrester Cole
+
+This is the main metafile for all shader programs. GQShaderManager
+parses this file.
+
+libnpr is distributed under the terms of the GNU General Public License.
+See the COPYING file for details.
+
+-->
+
+<glsl_programs>
+  <program name="stroke_render_snakes">
+    <shader type="vertex">
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="geometry" input_type="points" 
+	    output_type="triangle_strip" vertices_out="12">
+      <source filename="version.glsl"/>
+      <source filename="segment_atlas_common.glsl"/>
+      <source filename="stroke_render_snakes.geom"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="common.glsl"/>
+      <source filename="stroke_render_snakes.frag"/>
+    </shader>
+  </program>
+  <program name="stroke_render_spine">
+    <shader type="vertex">
+      <source filename="version.glsl"/>            
+      <source filename="stroke_render_spine.vert"/>        
+    </shader>
+    <shader type="geometry" input_type="lines" 
+	    output_type="triangle_strip" vertices_out="4">
+      <source filename="version.glsl"/>
+      <source filename="spine_test_common.glsl"/>
+      <source filename="stroke_render_spine.geom"/>        
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="spine_test_common.glsl"/>
+      <source filename="supersample_common.glsl"/>
+      <source filename="focus_common.glsl"/>
+      <source filename="stroke_render_common.glsl"/>
+      <source filename="stroke_render_spine.frag"/>        
+    </shader>
+  </program>
+  <program name="Phong">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="phongFrag.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="phongFrag.frag"/>
+    </shader>
+  </program>
+  <program name="Toon">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="toon.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="toon.frag"/>
+    </shader>
+  </program>
+  <program name="Lee_lines">
+    <shader type="vertex">
+        <source filename="version.glsl"/>
+        <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="Lee_lines.frag"/>
+    </shader>
+  </program>
+  <program name="gaussian_blur">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="gaussian_blur.frag"/>
+    </shader>
+  </program>
+  <program name="gaussian_blur_rgb">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="gaussian_blur_rgb.frag"/>
+    </shader>
+  </program>
+  <program name="derivative_filter">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="derivative_filter.frag"/>
+    </shader>
+  </program>
+  <program name="derivative_filter_rgb">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="derivative_filter_rgb.frag"/>
+    </shader>
+  </program>
+  <program name="filter_pair">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="filter_pair.frag"/>
+    </shader>
+  </program>
+  <program name="filter_pair_xyz">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="filter_pair_xyz.frag"/>
+    </shader>
+  </program>
+  <program name="image_lines">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="image_lines.frag"/>
+    </shader>
+  </program>
+  <program name="imagesc">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="imagesc.frag"/>
+    </shader>
+  </program>
+  <program name="vblur">
+    <shader type="vertex">
+        <source filename="version.glsl"/>
+        <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+        <source filename="version.glsl"/>
+        <source filename="vblur.frag"/>
+    </shader>
+  </program>
+  <program name="hblur">
+    <shader type="vertex">
+        <source filename="version.glsl"/>
+        <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+        <source filename="version.glsl"/>
+        <source filename="hblur.frag"/>
+    </shader>
+  </program>
+  <program name="gradient">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="gradient.frag"/>
+    </shader>
+  </program>
+  <program name="diff">
+    <shader type="vertex">
+      <source filename="passthrough.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="diff.frag"/>
+    </shader>
+  </program>
+  <program name="motion">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="motion.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="motion.frag"/>
+    </shader>
+  </program>
+  <program name="deferredShading">
+    <shader type="vertex">
+      <source filename="version.glsl"/>
+      <source filename="deferredShading.vert"/>
+    </shader>
+    <shader type="fragment">
+      <source filename="version.glsl"/>
+      <source filename="deferredShading.frag"/>
+    </shader>
+  </program>
+</glsl_programs>

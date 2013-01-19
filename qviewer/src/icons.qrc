@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons" >
+        <file>icons/forward.xpm</file>
+        <file>icons/play.xpm</file>
+        <file>icons/rewind.xpm</file>
+        <file>icons/stop.xpm</file>
+        <file>icons/pause.xpm</file>
+    </qresource>
+</RCC>
