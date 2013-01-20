@@ -1,1 +1,8 @@
 .DS_Store
+Makefile
+Makefile.Debug
+Makefile.Release
+*.o
+*.a
+moc_*.cpp
+ui_*.cpp

@@ -28,15 +28,8 @@ See the COPYING file for details.
 #ifdef WIN32
 #define fmax max
 #define fmin min
-#endif
-#ifndef isnan
-# define isnan(x) \
-	(sizeof (x) == sizeof (long double) ? isnan_ld (x) \
-	: sizeof (x) == sizeof (double) ? isnan_d (x) \
-	: isnan_f (x))
-static inline int isnan_f  (float       x) { return x != x; }
-static inline int isnan_d  (double      x) { return x != x; }
-static inline int isnan_ld (long double x) { return x != x; }
+#else
+using std::isinf;
 #endif
 
 #include<QSet>

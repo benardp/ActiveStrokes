@@ -19,6 +19,10 @@ See the COPYING file for details.
 #include "GQDraw.h"
 #include "Stats.h"
 
+#ifndef isinf
+using std::isinf;
+#endif
+
 #include "TriMesh.h"
 
 static QStringList k_shading_list = QStringList() << "Phong" << "Toon";
