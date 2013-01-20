@@ -769,7 +769,7 @@ void ASContour::mergeBrushPaths() {
 
             float slope1 = bv1->path()->slope();
             float slope2 = bv2->path()->slope();
-            if(fabs(slope1)!=slope1 && fabs(slope2)==slope2 || fabs(slope1)==slope1 && fabs(slope2)!=slope2)
+            if((fabs(slope1)!=slope1 && fabs(slope2)==slope2) || (fabs(slope1)==slope1 && fabs(slope2)!=slope2))
                 continue;
 
             float phase1 = bv1->path()->phase();

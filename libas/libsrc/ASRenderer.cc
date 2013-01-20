@@ -177,8 +177,6 @@ void ASRenderer::renderStrokes()
 
     shader.setUniform1f("clip_buffer_width", _clip_buf_width);
 
-    _pathRenderer.bindQuadVerticesVBO(shader);
-
     int segments_remaining = _total_segments;
     int row = 0;
     while(segments_remaining > 0)
@@ -186,13 +184,15 @@ void ASRenderer::renderStrokes()
         int count = min(segments_remaining, _clip_buf_width);
         shader.setUniform1f("row", row);
         reportGLError();
-        glDrawArrays(GL_POINTS, 0, count);
+        glBegin(GL_POINTS);
+        for(int i=0; i<count; i++){
+            glVertex2f(i,0);
+        }
+        glEnd();
         reportGLError();
         segments_remaining -= count;
         row++;
     }
-
-    _pathRenderer.unbindQuadVerticesVBO();
 
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
