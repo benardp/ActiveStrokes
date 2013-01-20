@@ -12,12 +12,12 @@ See the COPYING file for details.
 uniform float gain;
 uniform float offset;
 uniform sampler2DRect source;
-uniform float use_color;
+uniform int use_color;
 
 void main()
 {
     vec4 color = texture2DRect(source, gl_FragCoord.xy);
     if (use_color==0)
         color.rgb = vec3(sqrt(dot(color.rgb, color.rgb)));
-    gl_FragColor = gain * color + offset;
+    gl_FragColor =  gain * color + offset;
 }

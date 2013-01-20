@@ -85,7 +85,6 @@ inline void reportGLError()
     if (error != 0)
     {
         qCritical("GL Error: %s\n", gluErrorString(error));
-        qFatal("GL Error: %s\n", gluErrorString(error));
     }
 }
 

@@ -42,7 +42,7 @@ class ImageSpaceLines
     ASClipPathSet* clipPathSet() { return &_clip_path_set; }
 
     GQFramebufferObject* colors_fbo() { return &_colors_fbo; }
-    GQTexture2D*    offscreenTexture(const GQTexture2D* depthBuffer);
+    GQTexture2D*    offscreenTexture();
     GQTexture2D*    energyTexture() { return _energy_fbo.colorTexture(0); }
     GQTexture2D*    colorTexture() { return _colors_fbo.colorTexture(0); }
 
@@ -67,9 +67,6 @@ class ImageSpaceLines
     void extractLeeLines();
 
 protected:
-    void drawMesh(Scene& scene);
-
-  private:
     bool _initialized;
 
     GQFramebufferObject _colors_fbo;

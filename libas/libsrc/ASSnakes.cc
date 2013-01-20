@@ -855,7 +855,6 @@ void ASSnakes::splitAtJunctions()
             ASContour* closestEndPtContour;
             vec2 midPos;
             float closestCoef;
-            ASClipVertex *closestCV;
 
             while(!found && !neighbors.isEmpty()){
 
@@ -882,7 +881,6 @@ void ASSnakes::splitAtJunctions()
                                 float distance = dist2(midPos,sample);
                                 if(distance<=_coverRadius){
                                     found=true;
-                                    closestCV = vertex;
                                 }
                             }
                         }

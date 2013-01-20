@@ -197,7 +197,7 @@ void GLViewer::draw()
                 _snakesRenderer.init(&_snakes);
                 _ac_initialized = true;
             }else{
-                _refImg = _imgLines.offscreenTexture(NULL);
+                _refImg = _imgLines.offscreenTexture();
                 if(_scene->isAnimated()){
                     _snakes.updateRefImage(_refImg,
                                            _imgLines.geometricFlowBuffer(),

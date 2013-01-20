@@ -97,9 +97,9 @@ void GQDraw::drawFullScreenQuad( int texture_mode )
     glLoadIdentity();
 
     // turn off depth testing
-    /*    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);*/
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
     if (texture_mode == GL_TEXTURE_2D)
     {
@@ -131,7 +131,6 @@ void GQDraw::drawFullScreenQuad( int texture_mode )
     }
 
     // restore matrix state
-
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
@@ -139,6 +138,7 @@ void GQDraw::drawFullScreenQuad( int texture_mode )
 
     reportGLError();
 }
+
 
 void GQDraw::drawFullScreenQuad( const GQFramebufferObject& fbo )
 {
@@ -170,6 +170,7 @@ void GQDraw::drawFullScreenQuad( const GQFramebufferObject& fbo )
         int width = fbo.width();
         int height = fbo.height();
         glColor4f(1.0, 1.0, 1.0, 1.0);
+        glPointSize(20.f);
 
         glBegin(GL_QUADS);
         glTexCoord2i(0, 0);

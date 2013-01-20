@@ -44,8 +44,6 @@ static dkFloat k_moving_factor("Image Lines->Lee->Moving factor", 0.3);
 static QStringList k_opacity_controls = QStringList() << "None" << "Curvature" << "Distance"<< "Tone" ;
 static dkStringList k_opacity_ctrl("Image Lines->Lee->Opacity ctrl",k_opacity_controls);
 
-static dkBool k_depthWeight("Contours->Relaxation->Z weight",false);
-
 ImageSpaceLines::ImageSpaceLines()
 {
     _prevGeomFlow = new GQFloatImage();
@@ -87,7 +85,16 @@ void ImageSpaceLines::drawScene(Scene& scene, bool visualize)
     _colors_fbo.initFullScreen(BUFFER_INDICES_NUM,GQ_ATTACH_DEPTH_TEXTURE,GQ_COORDS_PIXEL,GQ_FORMAT_RGBA_FLOAT);
     _colors_fbo.bind(GQ_CLEAR_BUFFER);
 
-    drawMesh(scene);
+    GQDraw::clearGLState();
+
+    glEnable(GL_LIGHTING);
+    glDisable(GL_BLEND);
+    GQShaderRef shader;
+
+    shader = GQShaderManager::bindProgram("deferredShading");
+    shader.setUniform1i("toon_mode",k_shading.index());
+
+    scene.drawScene(shader,(ModelType)k_model.index());
 
     _colors_fbo.unbind();
 
@@ -264,25 +271,6 @@ void ImageSpaceLines::extractLines()
     _lines_fbo.unbind();
 }
 
-void ImageSpaceLines::drawMesh(Scene& scene)
-{
-    GQDraw::clearGLState();
-    GQDraw::clearGLDepth(1);
-
-    glEnable(GL_LIGHTING);
-    glDisable(GL_BLEND);
-
-    glClearColor(1, 1, 1, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    GQShaderRef shader;
-
-    shader = GQShaderManager::bindProgram("deferredShading");
-    shader.setUniform1i("toon_mode",k_shading.index());
-
-    scene.drawScene(shader,(ModelType)k_model.index());
-}
-
 void ImageSpaceLines::extractLeeLines()
 {
     _lines_fbo.initFullScreen(2);
@@ -392,7 +380,7 @@ void ImageSpaceLines::visualizeBuffer()
     }
 
     shader  = GQShaderManager::bindProgram("imagesc");
-    shader.setUniform1f("use_color", use_colors);
+    shader.setUniform1i("use_color", use_colors);
     shader.setUniform1f("gain", viz_gain);
     shader.setUniform1f("offset", offset);
     shader.bindNamedTexture("source", source_tex);
@@ -504,27 +492,18 @@ void ImageSpaceLines::readbackSamples(xform &proj_xf, xform &mv_xf, bool read_mo
 }
 
 
-GQTexture2D* ImageSpaceLines::offscreenTexture(const GQTexture2D* depthBuffer)
+GQTexture2D* ImageSpaceLines::offscreenTexture()
 {
-    GQShaderRef shader;
-
     _offscreen_fbo.initFullScreen(1,GQ_ATTACH_NONE,GQ_COORDS_PIXEL,GQ_FORMAT_RGBA_BYTE);
 
     _offscreen_fbo.bind(GQ_CLEAR_BUFFER);
 
-    shader = GQShaderManager::bindProgram("imagesc");
+    GQShaderRef shader = GQShaderManager::bindProgram("imagesc");
 
-    shader.setUniform1f("use_color", 0.0);
+    shader.setUniform1i("use_color", 0);
     shader.setUniform1f("gain", 1.0);
     shader.setUniform1f("offset", 0.0);
     shader.bindNamedTexture("source", _lines_fbo.colorTexture(0));
-    if(k_depthWeight){
-        shader.setUniform1i("useDepth",1);
-        shader.bindNamedTexture("depth", depthBuffer);
-    }else{
-        if(shader.attribLocation("useDepth")>=0)
-            shader.setUniform1i("useDepth",0);
-    }
 
     GQDraw::drawFullScreenQuad(_colors_fbo);
 
