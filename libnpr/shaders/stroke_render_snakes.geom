@@ -96,13 +96,13 @@ void main()
     vec4 tex_offsets = getTextureOffsets(segment_index);
     
     //interpolating the texture coordinates
-    int numSubSamples = 4;
+    float numSubSamples = 4;
     float spacing = 1.0 / (numSubSamples + 1);
-    float i1 = spacing * 1, i2 = spacing * 2, i3 = spacing * 3, i4 = spacing * 4;
-    vec2 tex1 = (1 - i1) * tex_offsets.xz + i1 * tex_offsets.yw;
-    vec2 tex2 = (1 - i2) * tex_offsets.xz + i2 * tex_offsets.yw;
-    vec2 tex3 = (1 - i3) * tex_offsets.xz + i3 * tex_offsets.yw;
-    vec2 tex4 = (1 - i4) * tex_offsets.xz + i4 * tex_offsets.yw;
+    float i1 = spacing * 1.0, i2 = spacing * 2.0, i3 = spacing * 3.0, i4 = spacing * 4.0;
+    vec2 tex1 = (1.0 - i1) * tex_offsets.xz + i1 * tex_offsets.yw;
+    vec2 tex2 = (1.0 - i2) * tex_offsets.xz + i2 * tex_offsets.yw;
+    vec2 tex3 = (1.0 - i3) * tex_offsets.xz + i3 * tex_offsets.yw;
+    vec2 tex4 = (1.0 - i4) * tex_offsets.xz + i4 * tex_offsets.yw;
     
     //access the brushpath texture
     vec2 brushpath_offset1 = getBrushpathOffset(tex_offsets.xz, scale);
@@ -113,10 +113,10 @@ void main()
     vec2 brushpath_offset2 = getBrushpathOffset(tex_offsets.yw, scale);
     
     //interpolate the spine position
-    vec4 p1 = (1 - i1) * clip_p + i1 * clip_q;
-    vec4 p2 = (1 - i2) * clip_p + i2 * clip_q;
-    vec4 p3 = (1 - i3) * clip_p + i3 * clip_q;
-    vec4 p4 = (1 - i4) * clip_p + i4 * clip_q;
+    vec4 p1 = (1.0 - i1) * clip_p + i1 * clip_q;
+    vec4 p2 = (1.0 - i2) * clip_p + i2 * clip_q;
+    vec4 p3 = (1.0 - i3) * clip_p + i3 * clip_q;
+    vec4 p4 = (1.0 - i4) * clip_p + i4 * clip_q;
     
     //compute the tangent of each subsegment
     float tsign = sign(texture2DRect(path_start_end_ptrs, segment_coord).w);
@@ -133,11 +133,11 @@ void main()
         vec2 prev_coord = indexToCoordinate(segment_index-1.0, clip_buffer_width);
         vec4 prev_clip = texture2DRect(clip_vert_0_buffer, prev_coord);
         vec2 p_prev = prev_clip.xy;
-        vec2 pos1 = (1 - i3) * p_prev + i3 * p;
-        vec2 pos2 = (1 - i4) * p_prev + i4 * p;
+        vec2 pos1 = (1.0 - i3) * p_prev + i3 * p;
+        vec2 pos2 = (1.0 - i4) * p_prev + i4 * p;
         t0 = tsign * (normalize(pos2 - pos1) + normalize(p - pos2)) * 0.5;
         vec4 tex_offsets_prev = getTextureOffsets(segment_index-1.0);
-        vec2 tex = (1 - i4) * tex_offsets_prev.xz + i4 * tex_offsets_prev.yw;
+        vec2 tex = (1.0 - i4) * tex_offsets_prev.xz + i4 * tex_offsets_prev.yw;
         vec2 brushpath_offset_prev = getBrushpathOffset(tex, scale);
         up0 = pos2 + brushpath_offset_prev.x*t0 + brushpath_offset_prev.y*vec2(-t0.y,t0.x);
         t0 = tsign * normalize(p - pos2);
@@ -148,11 +148,11 @@ void main()
         vec2 next_coord = indexToCoordinate(segment_index+1.0, clip_buffer_width);
         vec4 next_clip = texture2DRect(clip_vert_1_buffer, next_coord);
         vec2 q_next = next_clip.xy;
-        vec2 pos1 = (1 - i1) * q + i1 * q_next;
-        vec2 pos2 = (1 - i2) * q + i2 * q_next;
+        vec2 pos1 = (1.0 - i1) * q + i1 * q_next;
+        vec2 pos2 = (1.0 - i2) * q + i2 * q_next;
         t6 = tsign * (normalize(pos2 - pos1) + normalize(pos1 - q)) * 0.5;
         vec4 tex_offsets_next = getTextureOffsets(segment_index+1.0);
-        vec2 tex = (1 - i1) * tex_offsets_next.xz + i1 * tex_offsets_next.yw;
+        vec2 tex = (1.0 - i1) * tex_offsets_next.xz + i1 * tex_offsets_next.yw;
         vec2 brushpath_offset_next = getBrushpathOffset(tex, scale);
         up7 = pos1 + brushpath_offset_next.x*t6 + brushpath_offset_next.y*vec2(-t6.y,t6.x);
         t6 = tsign * normalize(pos1 - q);

@@ -317,7 +317,7 @@ bool ASRenderer::makePathVertexFBO()
             if(slope==0)
                 slope = 0.001;
             double d = fabs(slope) * length_scale * texture_length;
-            double t = ceil(log2(1.0/d));
+            double t = ceil(log(1.0/d)/log(2.0));
             double l = pow(2.0,-t)/d;
             double fact = pow(2.0,t);
 

@@ -55,7 +55,7 @@ void Stats::clear()
 
     _layout_changed = false;
     _data_changed = false;
-    QAbstractItemModel::reset();
+    //QAbstractItemModel::reset();
 }
 
 void Stats::reset()

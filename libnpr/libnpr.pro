@@ -13,11 +13,11 @@ win32 {
 }
 else {
         TEMPLATE = lib
+        QMAKE_CXXFLAGS += -fopenmp
         DEFINES += HAVE_VA_COPY
 
         macx {
                 DEFINES += DARWIN
-        QMAKE_CXXFLAGS += -fopenmp
         }
         else {
                 DEFINES += LINUX

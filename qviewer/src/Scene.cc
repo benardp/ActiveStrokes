@@ -60,8 +60,6 @@ Scene::~Scene()
 void Scene::init()
 {
     _tex_toon = new GQTexture2D();
-    if(_tex_toon_filename == "")
-        _tex_toon_filename = "../samples/textures/toon/toonBW.png";
 
     if (!loadToonTex(_tex_toon_filename, GL_TEXTURE_2D))
 	{

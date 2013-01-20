@@ -1,3 +1,0 @@
-Program info log for stroke_render_snakes
-
-WARNING: Output of geometry shader 'visibility' not read by fragment shader

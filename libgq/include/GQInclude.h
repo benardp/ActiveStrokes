@@ -45,13 +45,8 @@ See the COPYING file for details.
 
 #include <QtGlobal>
 
-//#define GQ_DEBUGGING_LEVEL_REALLY_VERBOSE
-//#define GQ_DEBUGGING_LEVEL_VERBOSE
-#define GQ_DEBUGGING_LEVEL_QUIET
-//#define GQ_DEBUGGING_LEVEL_SILENT
-
 #include <Vec.h>
-#include <Xform.h>
+#include <XForm.h>
 
 typedef int             int32;
 typedef char            int8;
@@ -95,8 +90,11 @@ inline void reportGLError()
 }
 
 #ifdef WIN32
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <float.h>
 #define isnan _isnan
+#define isinf(x) (!_finite(x))
 #else
 #include <cmath>
 using std::isnan;

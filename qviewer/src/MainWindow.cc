@@ -158,6 +158,7 @@ bool MainWindow::openScene( const QString& filename )
 
     Stats::instance().clear();
     _scene->recordStats(Stats::instance());
+    _scene->setTexToonFilename(_last_scene_dir + "/../samples/textures/toon/toonBW.png");
 
     _gl_viewer->setScene(_scene);
     _dials_and_knobs->load(_scene->dialsAndKnobsState());

@@ -114,6 +114,8 @@ public:
     Session* session() { return _session; }
     void setSession( Session* session ) { _session = session; }
 
+    void setTexToonFilename(const QString &path) { _tex_toon_filename = path; }
+
 public slots:
     void toggleAnimation(bool play);
     void advanceAnimation();

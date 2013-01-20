@@ -103,7 +103,6 @@ void GLViewer::setScene( Scene* scene )
 
 void GLViewer::finishInit()
 {
-    _snakesRenderer.init(&_snakes);
     _inited = true;
 }
 
@@ -195,6 +194,7 @@ void GLViewer::draw()
                 _imgLines.initGeomFlowBuffer();
                 _snakes.clear();
                 _snakes.init(*_imgLines.clipPathSet(),true);
+                _snakesRenderer.init(&_snakes);
                 _ac_initialized = true;
             }else{
                 _refImg = _imgLines.offscreenTexture(NULL);
