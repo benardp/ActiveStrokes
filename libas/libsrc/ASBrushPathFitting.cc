@@ -20,6 +20,11 @@ See the COPYING file for details.
 #include <QDebug>
 #include "assert.h"
 
+#ifdef WIN32
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
+
 ASBrushPathFitting ASBrushPathFitting::_instance;
 
 #define MIN_DISTANCE_FROM_ZERO 0.001
