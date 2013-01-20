@@ -470,7 +470,7 @@ void ImageSpaceLines::readbackSamples(xform &proj_xf, xform &mv_xf, bool read_mo
             vec worldPos = inv_mvp * projPos;
 
             if(isnan(worldPos[0]) || isnan(worldPos[1]) || isnan(worldPos[2]) ||
-                    std::isinf(worldPos[0]) || std::isinf(worldPos[1]) || std::isinf(worldPos[2])){
+                    isinf(worldPos[0]) || isinf(worldPos[1]) || isinf(worldPos[2])){
                 qWarning("Nan back projection");
                 continue;
             }

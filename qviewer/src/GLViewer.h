@@ -24,7 +24,7 @@ See the COPYING file for details.
 
 #include "ASRenderer.h"
 
-#include <QGLViewer/qglviewer.h>
+#include <qglviewer.h>
 
 class Scene;
 
