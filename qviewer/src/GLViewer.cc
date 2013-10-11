@@ -94,6 +94,7 @@ void GLViewer::setScene( Scene* scene )
     _inited = false;
     _scene = scene;
     _new_scene = true;
+    _ac_initialized = false;
 
     if (!_scene->viewerState().isNull())
         initFromDOMElement(_scene->viewerState());
@@ -179,7 +180,7 @@ void GLViewer::draw()
     _imgLines.drawScene(*_scene,!k_useSnakes && (k_drawRefImg != k_ref_list[4]));
 
     if(k_useSnakes){
-        if(_prev_frame_number != _scene->currentFrameNumber()){
+        if(_scene->isAnimated() &&  _prev_frame_number != _scene->currentFrameNumber()){
             _imgLines.nextGeomFlowBuffer();
         }
         _imgLines.readbackSamples(proj_xf,modelView_xf,_scene->isAnimated(),true);

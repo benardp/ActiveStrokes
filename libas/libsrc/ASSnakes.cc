@@ -212,6 +212,7 @@ void ASSnakes::updateRefImage(GQTexture2D* refImg, GQFloatImage* geomFlow, GQFlo
 void ASSnakes::addSnakesToGrid()
 {
     if(k_drawGrid){
+        glPointSize(1.f);
         _simpleGrid.startDrawGrid(_simpleGrid.origin(),_simpleGrid.cellSize(),false);
         glColor3f(1.0f,0.0f,0.0f);
         glBegin(GL_POINTS);
