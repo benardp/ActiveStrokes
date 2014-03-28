@@ -44,6 +44,9 @@ Scene::Scene()
     _session = NULL;
     _tex_toon_filename == "";
     _tex_toon = NULL;
+    _sphere = NULL;
+    _cube = NULL;
+    _quad = NULL;
     connect(&k_play_animation, SIGNAL(valueChanged(bool)), this, SLOT(toggleAnimation(bool)));
     connect(&_animation_timer, SIGNAL(timeout()), this, SLOT(advanceAnimation()));
 }
@@ -51,10 +54,14 @@ Scene::Scene()
 Scene::~Scene()
 {
 	clear();
-	delete _cube;
-	delete _sphere;
-	delete _quad;
-    delete _tex_toon;
+    if(_cube)
+        delete _cube;
+    if(_sphere)
+        delete _sphere;
+    if(_quad)
+        delete _quad;
+    if(_tex_toon)
+        delete _tex_toon;
 }
 
 void Scene::init()

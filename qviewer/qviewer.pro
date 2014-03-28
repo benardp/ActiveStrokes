@@ -15,8 +15,6 @@ win32 {
 else {
     TEMPLATE = app
     TRIMESH = trimesh
-    QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_LFLAGS += -fopenmp
     macx {
         DEFINES += DARWIN
         UNAME = Darwin
@@ -24,6 +22,8 @@ else {
         LIBS += -framework CoreFoundation -framework OpenGL
     }
     else {
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_LFLAGS += -fopenmp
         DEFINES += LINUX
         UNAME = Linux
         LIBS += -lGLU
