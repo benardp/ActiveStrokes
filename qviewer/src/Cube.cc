@@ -80,12 +80,21 @@ void Cube::createVAO(GQShaderRef& shader)
     _vertexNormalIndex   = shader.attribLocation("normal");
 
     if(!_initVAO){
+#ifdef __APPLE__
+        glGenVertexArraysAPPLE(1, (GLuint *)&_vertexArrayObject);
+#else
         glGenVertexArrays(1, (GLuint *)&_vertexArrayObject);
+#endif
     }
 
+#ifdef __APPLE__
+    glBindVertexArrayAPPLE(_vertexArrayObject);
+#else
     glBindVertexArray(_vertexArrayObject);
+#endif
 
     glBindBuffer(GL_ARRAY_BUFFER, _cubeBuffers[0]);
+
     glVertexAttribPointer(_vertexPositionIndex, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(_vertexPositionIndex);
 
@@ -108,7 +117,11 @@ void Cube::createVAO(GQShaderRef& shader)
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _cubeBuffers[3]);
 
+#ifdef __APPLE__
+    glBindVertexArrayAPPLE(0);
+#else
     glBindVertexArray(0);
+#endif
 
     reportGLError();
 
@@ -119,9 +132,15 @@ void Cube::draw(GQShaderRef& shader)
 {
     createVAO(shader);
 
+#ifdef __APPLE__
+    glBindVertexArrayAPPLE(_vertexArrayObject);
+    glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, 0);
+    glBindVertexArrayAPPLE(0);
+#else
     glBindVertexArray(_vertexArrayObject);
     glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+#endif
 
     reportGLError();
 }
