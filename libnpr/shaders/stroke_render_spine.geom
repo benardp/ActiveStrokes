@@ -13,8 +13,6 @@ See the COPYING file for details.
 
 \*****************************************************************************/
 
-#extension GL_EXT_geometry_shader4 : enable
-
 uniform vec4 viewport;
 uniform float pen_width;
 uniform float texture_length;

@@ -1910,7 +1910,7 @@ static bool write_verts_bin_helper(TriMesh *mesh, FILE *f,
 			if (!mesh->colors.empty() && write_color && float_color)
 				FWRITE(&(mesh->colors[i][0]), 12, 1, f);
 			if (!mesh->colors.empty() && write_color && !float_color) {
-				char c[3] = {
+                unsigned char c[3] = {
 					color2uchar(mesh->colors[i][0]),
 					color2uchar(mesh->colors[i][1]),
 					color2uchar(mesh->colors[i][2]) };

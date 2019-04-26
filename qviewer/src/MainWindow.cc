@@ -15,6 +15,7 @@ See the COPYING file for details.
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QRegExp>
 #include <QSignalMapper>

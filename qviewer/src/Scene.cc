@@ -42,7 +42,7 @@ Scene::Scene()
 {
     _current_frame = 0;
     _session = NULL;
-    _tex_toon_filename == "";
+    _tex_toon_filename = "";
     _tex_toon = NULL;
     connect(&k_play_animation, SIGNAL(valueChanged(bool)), this, SLOT(toggleAnimation(bool)));
     connect(&_animation_timer, SIGNAL(timeout()), this, SLOT(advanceAnimation()));

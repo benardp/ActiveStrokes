@@ -20,6 +20,7 @@ See the COPYING file for details.
     <shader type="geometry" input_type="points" 
 	    output_type="triangle_strip" vertices_out="12">
       <source filename="version.glsl"/>
+      <source filename="geometry_shader.glsl"/>
       <source filename="segment_atlas_common.glsl"/>
       <source filename="stroke_render_snakes.geom"/>
     </shader>
@@ -37,6 +38,7 @@ See the COPYING file for details.
     <shader type="geometry" input_type="lines" 
 	    output_type="triangle_strip" vertices_out="4">
       <source filename="version.glsl"/>
+      <source filename="geometry_shader.glsl"/>
       <source filename="spine_test_common.glsl"/>
       <source filename="stroke_render_spine.geom"/>        
     </shader>

@@ -19,7 +19,7 @@ See the COPYING file for details.
 namespace GQDraw
 {
 	void drawElements(const GQVertexBufferSet& vb, int gl_mode, int offset, 
-					  int length, const int* indices = 0);
+                      int length, const int* indices = nullptr);
 
     void clearGLState();
     void clearGLScreen(const vec& color, float depth);
