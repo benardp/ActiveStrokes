@@ -66,12 +66,12 @@ void NPRGLDraw::clearGLState()
 
     for (int i = 0; i < 8; i++)
     {
-        glActiveTexture(GL_TEXTURE0 + i);
+		glFuncs.glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindTexture(GL_TEXTURE_3D, 0);
         glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
     }
-    glActiveTexture(GL_TEXTURE0);
+	glFuncs.glActiveTexture(GL_TEXTURE0);
 }
 
 void NPRGLDraw::setUniformViewParams(const GQShaderRef& shader)

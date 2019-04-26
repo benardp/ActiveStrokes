@@ -70,7 +70,8 @@ void GQGPUImageProcessing::convolve(GQTexture2D* kernel, GQTexture2D* image, GQF
     shader.bindNamedTexture("kernel",kernel);
     shader.bindNamedTexture("src_tex",image);
 
-    glActiveTexture(GL_TEXTURE0);
+	QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+	glFuncs.glActiveTexture(GL_TEXTURE0);
 
     drawQuad();
 
@@ -102,7 +103,8 @@ void GQGPUImageProcessing::convolve(GQTexture2D* kernel, GQTexture2D* image, GQI
     shader.bindNamedTexture("kernel",kernel);
     shader.bindNamedTexture("src_tex",image);
 
-    glActiveTexture(GL_TEXTURE0);
+	QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+	glFuncs.glActiveTexture(GL_TEXTURE0);
 
     drawQuad();
 
@@ -132,7 +134,8 @@ void GQGPUImageProcessing::diff(GQTexture2D* image1, GQTexture2D* image2, GQImag
     shader.bindNamedTexture("image1",image1);
     shader.bindNamedTexture("image2",image2);
 
-    glActiveTexture(GL_TEXTURE0);
+	QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+	glFuncs.glActiveTexture(GL_TEXTURE0);
 
     drawQuad();
 
@@ -163,7 +166,8 @@ void GQGPUImageProcessing::morpho(GQTexture2D* image, float blur, GQImage& resul
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
 
-    glActiveTexture(GL_TEXTURE0);
+	QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+	glFuncs.glActiveTexture(GL_TEXTURE0);
 
     drawQuad();
 

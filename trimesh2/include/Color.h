@@ -31,12 +31,6 @@ using std::max;
 # define M_PI 3.14159265358979323846
 #endif
 
-#ifdef _WIN32
-  inline float cbrt(float arg) {
-    return pow(arg, 1.0f/3.0f);
-  }
-#endif
-
 class Color : public Vec<3,float> {
 public:
 	Color()
@@ -155,7 +149,7 @@ private:
 	static inline float cielab_nonlinearity(float x)
 	{
 		if (x > 216.0f / 24389.0f)
-			return cbrt(x);
+			return pow(x, 1.0f / 3.0f);
 		else
 			return 4.0f / 29.0f + (841.0f / 108.0f) * x;
 	}

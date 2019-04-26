@@ -434,7 +434,8 @@ bool GQTexture3D::genTexture(int internal_format, int format,
     glGenTextures(1, (GLuint*)(&_id));
     glBindTexture(target, _id);
     
-    glTexImage3D(target, 0, internal_format, _width, _height, _depth, 0,
+	QOpenGLExtraFunctions glFuncs(QOpenGLContext::currentContext());
+	glFuncs.glTexImage3D(target, 0, internal_format, _width, _height, _depth, 0,
                  format, type, data);
     
     glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_mode);

@@ -454,10 +454,10 @@ void GQShaderManager::unbindProgram( int program_ref_guid )
         glFuncs.glUseProgram(0);
         for (int i = 0; i < _bound_textures.size(); i++)
         {
-            glActiveTexture(GL_TEXTURE0 + i);
+			glFuncs.glActiveTexture(GL_TEXTURE0 + i);
             _bound_textures[i]->unbind();
         }
-        glActiveTexture(GL_TEXTURE0);
+		glFuncs.glActiveTexture(GL_TEXTURE0);
 
         _bound_texture_names.clear();
         _bound_textures.clear();
@@ -540,7 +540,7 @@ bool GQShaderManager::bindNamedTexture(int program_ref_guid,
 
         QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
         glFuncs.glUniform1i( loc, tex_unit );
-        glActiveTexture( GL_TEXTURE0 + tex_unit );
+		glFuncs.glActiveTexture( GL_TEXTURE0 + tex_unit );
         texture->bind();
 
         //qWarning("binding %s on unit %d\n", qPrintable(name), tex_unit);
