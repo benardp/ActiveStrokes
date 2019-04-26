@@ -13,7 +13,6 @@ See the COPYING file for details.
 
 \*****************************************************************************/
 
-#include "GLViewer.h"
 #include <XForm.h>
 #include <assert.h>
 #include <QFile>
@@ -22,7 +21,9 @@ See the COPYING file for details.
 #include <QFileDialog>
 #include <QDir>
 #include <QDebug>
+#include <manipulatedCameraFrame.h>
 
+#include "GLViewer.h"
 #include "GQDraw.h"
 #include "NPRGLDraw.h"
 #include "GQGPUImageProcessing.h"
@@ -57,13 +58,16 @@ GLViewer::GLViewer(QWidget* parent) : QGLViewer( parent )
 
     camera()->frame()->setWheelSensitivity(-1.0);
 
-    QGLFormat format;
-    format.setAlpha(true);
-    format.setSampleBuffers(true);
-    format.setSamples(8);
-    format.setDoubleBuffer(true);
-    setFormat(format);
     makeCurrent();
+}
+
+void GLViewer::initializeGL()
+{
+    initializeOpenGLFunctions();
+    qDebug() << "version: "
+                 << QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    qDebug() << "GSLS version: "
+                 << QLatin1String(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 }
 
 void GLViewer::resetView()

@@ -280,11 +280,12 @@ void GQVertexBufferSet::copyToVBOs()
     for (int i = 0; i < _buffers.size(); i++)
     {
         BufferInfo& buf = _buffers[i];
+        QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
 
         if (buf._vbo_id < 0)
         {
             GLuint id;
-            glGenBuffers(1, &id);
+            glFuncs.glGenBuffers(1, &id);
             // Check for a fishy buffer id. Mac driver sometimes
             // returns crap values without raising a GL error.
             if (id == 0 || id > 1000000)
@@ -299,10 +300,10 @@ void GQVertexBufferSet::copyToVBOs()
         if (buf._semantic == GQ_INDEX)
             target = GL_ELEMENT_ARRAY_BUFFER;
 
-        glBindBuffer(target, (GLuint)(buf._vbo_id));
-        glBufferData(target, buf._vbo_size,
+        glFuncs.glBindBuffer(target, (GLuint)(buf._vbo_id));
+        glFuncs.glBufferData(target, buf._vbo_size,
                      buf.dataPointer(), buf._gl_usage_mode);
-        glBindBuffer(target, 0);
+        glFuncs.glBindBuffer(target, 0);
     }
     reportGLError();
 }
@@ -404,15 +405,17 @@ void GQVertexBufferSet::bindBuffer( const BufferInfo& info, int attrib ) const
         bind_target = GL_ELEMENT_ARRAY_BUFFER;
     }
 
+    QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+
     const uint8* datap;
     if (info._vbo_id >= 0)
     {
-        glBindBuffer(bind_target, info._vbo_id);
+        glFuncs.glBindBuffer(bind_target, info._vbo_id);
         datap = reinterpret_cast<const uint8*>(offset);
     }
     else
     {
-        glBindBuffer(bind_target, 0);
+        glFuncs.glBindBuffer(bind_target, 0);
         datap = info.dataPointer() + offset;
     }
 
@@ -423,10 +426,10 @@ void GQVertexBufferSet::bindBuffer( const BufferInfo& info, int attrib ) const
         break;
     default:
         assert(attrib >= 0);
-        glVertexAttribPointer(attrib, info._width, info._data_type,
+        glFuncs.glVertexAttribPointer(attrib, info._width, info._data_type,
                               info._normalize, stride,
                               (const void*)(datap));
-        glEnableVertexAttribArray(attrib);
+        glFuncs.glEnableVertexAttribArray(attrib);
         break;
     }
 
@@ -441,6 +444,7 @@ void GQVertexBufferSet::bindBuffer( const BufferInfo& info, int attrib ) const
 void GQVertexBufferSet::unbindBuffer( const BufferInfo& info ) const
 {
     int attrib = _bound_buffers[info._name];
+    QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
     if (attrib < 0)
     {
         int client_state = kGlArrays[info._semantic];
@@ -449,13 +453,13 @@ void GQVertexBufferSet::unbindBuffer( const BufferInfo& info ) const
     }
     else
     {
-        glDisableVertexAttribArray(attrib);
+        glFuncs.glDisableVertexAttribArray(attrib);
     }
     
     int target = GL_ARRAY_BUFFER;
     if (info._semantic == GQ_INDEX)
         target = GL_ELEMENT_ARRAY_BUFFER;
-    glBindBuffer(target, 0);
+    glFuncs.glBindBuffer(target, 0);
     
     _bound_buffers.remove(info._name);
 }
@@ -508,10 +512,12 @@ void GQVertexBufferSet::copyFromSubFBO(const QString& vbo_name,
     else
         format = GL_RGBA;
 
-    glBindBuffer(GL_PIXEL_PACK_BUFFER_ARB, info->_vbo_id);
+    QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+
+    glFuncs.glBindBuffer(GL_PIXEL_PACK_BUFFER_ARB, info->_vbo_id);
     glReadBuffer(GL_COLOR_ATTACHMENT0_EXT + fbo_buffer);
     glReadPixels(x, y, width, height, format, data_type, 0);
-    glBindBuffer(GL_PIXEL_PACK_BUFFER_ARB, 0);
+    glFuncs.glBindBuffer(GL_PIXEL_PACK_BUFFER_ARB, 0);
 
     reportGLError();
 }
@@ -565,7 +571,8 @@ void GQVertexBufferSet::BufferInfo::deleteVBO()
 {
     if (_vbo_id >= 0)
     {
-        glDeleteBuffers(1, (GLuint*)(&_vbo_id));
+        QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+        glFuncs.glDeleteBuffers(1, (GLuint*)(&_vbo_id));
     }
     _vbo_id = -1;
 }

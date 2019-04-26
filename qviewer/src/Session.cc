@@ -280,7 +280,7 @@ void Session::startPlayback( QGLViewer* viewer, MainWindow *ui, DialsAndKnobs* d
     _screenshot_file_pattern = "";
     _screenshot_filenames.clear();
 
-    connect( this, SIGNAL( redrawNeeded() ), _viewer, SLOT( updateGL() ) );
+    connect( this, SIGNAL( redrawNeeded() ), _viewer, SLOT( update() ) );
     if (_playback_mode == PLAYBACK_SCREENSHOTS)
     {
         int extindex = filename.lastIndexOf('.');
@@ -308,7 +308,7 @@ void Session::cleanUpPlayback()
 {
     assert( _state == STATE_PLAYING || _state == STATE_PAUSED);
 
-    disconnect( this, SIGNAL( redrawNeeded() ), _viewer, SLOT( updateGL() ) );
+    disconnect( this, SIGNAL( redrawNeeded() ), _viewer, SLOT( update() ) );
     disconnect( _viewer, SIGNAL( drawFinished(bool)), this, SLOT(dumpScreenshot()) );
 
     _state = STATE_LOADED;
@@ -331,7 +331,7 @@ void Session::restartPlayback()
 {
     //assert( _state == STATE_PAUSED || _state == STATE_PLAYING);
 
-    connect( this, SIGNAL( redrawNeeded() ), _viewer, SLOT( updateGL() ) );
+    connect( this, SIGNAL( redrawNeeded() ), _viewer, SLOT( update() ) );
     if (_playback_mode == PLAYBACK_SCREENSHOTS)
     {
         connect( _viewer, SIGNAL( drawFinished(bool)), this, SLOT(dumpScreenshot()) );
@@ -347,7 +347,7 @@ void Session::pausePlayback()
     if( _state != STATE_PAUSED && _state != STATE_PLAYING)
         return;
 
-    disconnect( this, SIGNAL( redrawNeeded() ), _viewer, SLOT( updateGL() ) );
+    disconnect( this, SIGNAL( redrawNeeded() ), _viewer, SLOT( update() ) );
     disconnect( _viewer, SIGNAL( drawFinished(bool)), this, SLOT(dumpScreenshot()) );
 
     _state = STATE_PAUSED;
@@ -425,7 +425,7 @@ void Session::advancePlaybackFrame()
             emit playbackFinished();
     	}
     }else{
-    	_viewer->updateGL();
+        _viewer->update();
     }
 }
 

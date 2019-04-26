@@ -101,9 +101,10 @@ void Stats::updateView()
 {
     if (_layout_changed)
     {
-        QAbstractItemModel::reset();
+        beginResetModel();
         _layout_changed = false;
         _data_changed = false;
+        endResetModel();
     }
     else if (_data_changed)
     {

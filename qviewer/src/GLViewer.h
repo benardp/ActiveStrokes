@@ -16,8 +16,8 @@ See the COPYING file for details.
 #ifndef GLVIEWER_H_
 #define GLVIEWER_H_
 
-#include "GQTexture.h"
 #include "GQInclude.h"
+#include "GQTexture.h"
 
 #include "DialsAndKnobs.h"
 #include "ImageSpaceLines.h"
@@ -28,7 +28,7 @@ See the COPYING file for details.
 
 class Scene;
 
-class GLViewer : public QGLViewer
+class GLViewer : public QGLViewer, protected QOpenGLExtraFunctions
 {
     Q_OBJECT
 
@@ -42,6 +42,7 @@ public:
     void setDisplayTimers(bool display) { _display_timers = display; }
 
 protected:
+    virtual void initializeGL();
     virtual void draw();
     virtual void resizeGL( int width, int height );
 

@@ -35,7 +35,6 @@ INCLUDEPATH += include
 #Input
 HEADERS += include/GQ*.h
 SOURCES += libsrc/GQ*.cc
-SOURCES += libsrc/GLee.c
 
 # Trimesh2
 INCLUDEPATH += ../trimesh2/include

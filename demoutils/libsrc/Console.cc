@@ -119,19 +119,18 @@ void Console::getProcessStdout()
 void Console::installMsgHandler()
 {
     assert(_current_msg_console == 0);
-    qInstallMsgHandler( msgHandler );
+    qInstallMessageHandler( msgHandler );
     _current_msg_console = this;
-
 }
 
 void Console::removeMsgHandler()
 {
     assert(_current_msg_console == this);
-    qInstallMsgHandler( 0 );
+    qInstallMessageHandler(0);
     _current_msg_console = 0;
 }
 
-void Console::msgHandler( QtMsgType type, const char* msg )
+void Console::msgHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     if (type == QtFatalMsg)
     {

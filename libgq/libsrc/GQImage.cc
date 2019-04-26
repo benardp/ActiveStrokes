@@ -1,9 +1,10 @@
+#include <GQInclude.h>
+
 #include <QImage>
 #include <QColor>
 #include <QtGui>
 
 #include <GQImage.h>
-#include <GQInclude.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -318,8 +319,8 @@ bool GQFloatImage::savePFM(const QString& filename, bool flip)
         version = "PF";
     QString header;
     header.sprintf("%s\n%d %d\n%.1f\n", qPrintable(version), width(), height(), 
-                   we_are_little_endian() ? -1.0f : 1.0f).toAscii();
-    file.write(header.toAscii(), header.toAscii().size());
+                   we_are_little_endian() ? -1.0f : 1.0f).toLatin1();
+    file.write(header.toLatin1(), header.toLatin1().size());
 
     int write_chan = std::min(chan(), 3);
     for (int y = 0; y < height(); y++)

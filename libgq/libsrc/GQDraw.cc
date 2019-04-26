@@ -51,7 +51,8 @@ void GQDraw::clearGLState()
     glDisable(GL_CULL_FACE);
     glDepthFunc(GL_LESS);
     glEnable(GL_DEPTH_TEST);
-    glUseProgram(0);
+    QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+    glFuncs.glUseProgram(0);
 
     for (int i = 0; i < 8; i++)
     {

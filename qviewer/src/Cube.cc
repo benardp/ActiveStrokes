@@ -48,6 +48,8 @@ Cube::Cube()
 {
     _radius = 2.4;
 
+    initializeOpenGLFunctions();
+
     glGenBuffers(5, (GLuint *)_cubeBuffers);
 
     glBindBuffer(GL_ARRAY_BUFFER, _cubeBuffers[0]);

@@ -15,8 +15,9 @@ See the COPYING file for details.
 #ifndef _GQ_INCLUDE_H_
 #define _GQ_INCLUDE_H_
 
+#include <QOpenGLExtraFunctions>
+
 #ifdef DARWIN
-#    include <GLee.h>
 #    include <glu.h>
 #endif
 #ifdef LINUX
@@ -26,7 +27,6 @@ See the COPYING file for details.
 #    include <QEvent>
 #    include <QComboBox>
 #    include <QMessageBox>
-#    include <GLee.h>
 #    include <GL/glu.h>
 #    include <QtGlobal>
 #    include <QDir>
@@ -39,7 +39,6 @@ See the COPYING file for details.
 #ifdef WIN32
 #    define NOMINMAX
 #	 include <windows.h>
-#    include <GLee.h>
 #    include <GL/glu.h>
 #endif
 

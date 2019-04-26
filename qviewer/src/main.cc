@@ -8,6 +8,7 @@
 #include <QStringList>
 #include <QDir>
 #include <QMessageBox>
+#include <QSurfaceFormat>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,6 +57,14 @@ QDir findShadersDirectory( const QString& app_path )
 int main( int argc, char** argv )
 {
     QApplication app(argc, argv);
+
+    QSurfaceFormat format;
+    format.setVersion(2, 1);
+    format.setAlphaBufferSize(8);
+    format.setSamples(8);
+    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    QSurfaceFormat::setDefaultFormat(format);
+
     MainWindow window;
     QDir shaders_dir = findShadersDirectory(app.applicationDirPath());
     QDir working_dir = QDir::current();

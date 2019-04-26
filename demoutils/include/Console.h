@@ -66,7 +66,7 @@ public slots:
     void runScript(const QString& filename);
 
 protected:
-    static void msgHandler( QtMsgType type, const char* msg );
+    static void msgHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
     
 protected:
     void addGlobalsToEngine();

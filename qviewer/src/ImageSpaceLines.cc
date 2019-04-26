@@ -267,7 +267,8 @@ void ImageSpaceLines::extractLines()
     GLfloat viewport[4];
     glGetFloatv(GL_VIEWPORT, viewport);
     int viewport_id = shader.uniformLocation("viewport");
-    glUniform4fv(viewport_id, 1, viewport);
+    QOpenGLFunctions glFuncs(QOpenGLContext::currentContext());
+    glFuncs.glUniform4fv(viewport_id, 1, viewport);
 
     _lines_fbo.bind(GQ_CLEAR_BUFFER);
     _lines_fbo.drawToAllBuffers();
@@ -463,7 +464,7 @@ void ImageSpaceLines::readbackSamples(xform &proj_xf, xform &mv_xf, bool read_mo
 
             if(isnan(worldPos[0]) || isnan(worldPos[1]) || isnan(worldPos[2]) ||
                     isinf(worldPos[0]) || isinf(worldPos[1]) || isinf(worldPos[2])){
-                qWarning("Nan back projection");
+                //qWarning("Nan back projection");
                 continue;
             }
 

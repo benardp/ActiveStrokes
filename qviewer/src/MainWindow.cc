@@ -9,7 +9,12 @@ See the COPYING file for details.
 
 \*****************************************************************************/
 
+#include "GQInclude.h"
+
 #include <QtGui>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
 #include <QFileDialog>
 #include <QRegExp>
 #include <QSignalMapper>
@@ -44,7 +49,6 @@ MainWindow::MainWindow( )
 
 MainWindow::~MainWindow()
 {
-    delete _scene;
 }
 
 void MainWindow::init( const QDir& working_dir, const QString& scene_name )
@@ -118,6 +122,10 @@ void MainWindow::closeEvent( QCloseEvent* event )
     if(_current_session)
         delete _current_session;
 
+    setCentralWidget(nullptr);
+    delete _scene;
+    delete _gl_viewer;
+
     event->accept();
 }
 
@@ -154,7 +162,7 @@ bool MainWindow::openScene( const QString& filename )
     _scene = new_scene;
     _scene_name = QDir::fromNativeSeparators(filename);
     connect(_scene->animationTimer(), SIGNAL(timeout()),
-            _gl_viewer, SLOT(updateGL()));
+            _gl_viewer, SLOT(update()));
 
     Stats::instance().clear();
     _scene->recordStats(Stats::instance());
@@ -190,7 +198,7 @@ void MainWindow::on_actionOpen_ToonTexture_triggered()
                                         _last_scene_dir);
         if (!filename.isNull()) {
             _scene->loadToonTex(filename, GL_TEXTURE_2D);
-            _gl_viewer->updateGL();
+            _gl_viewer->update();
         }
     }
 }
@@ -204,7 +212,7 @@ void MainWindow::on_actionOpen_Recent_Scene_triggered(int which)
         QString fullpath = fileinfo.absoluteFilePath();
 
         openScene( _recent_scenes[which] );
-        _gl_viewer->updateGL();
+        _gl_viewer->update();
     }
 }
 
@@ -339,7 +347,7 @@ void MainWindow::setupDockWidgets(QMenu* menu)
 {
     QStringList separate_windows = QStringList() << "Image Lines" << "Contours"<<"BrushPaths" << "Fitting" << "Style";
     _dials_and_knobs = new DialsAndKnobs(this, menu, separate_windows);
-    connect(_dials_and_knobs, SIGNAL(dataChanged()), _gl_viewer, SLOT(updateGL()));
+    connect(_dials_and_knobs, SIGNAL(dataChanged()), _gl_viewer, SLOT(update()));
 
 #ifndef LINUX
     _console = new Console(this, menu);
@@ -395,7 +403,7 @@ void MainWindow::on_actionSave_Screenshot_triggered()
 void MainWindow::setFoV(float degrees)
 {
     _gl_viewer->camera()->setFieldOfView( degrees * ( 3.1415926f / 180.0f ) );
-    _gl_viewer->updateGL();
+    _gl_viewer->update();
 }
 
 
@@ -416,7 +424,7 @@ void MainWindow::resizeToFitViewerSize(const QString& size)
 void MainWindow::on_actionReload_Shaders_triggered()
 {
     GQShaderManager::reload();
-    _gl_viewer->updateGL();
+    _gl_viewer->update();
 }
 
 void MainWindow::setupViewerResizeActions(QMenu* menu)

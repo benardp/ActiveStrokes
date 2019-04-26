@@ -15,7 +15,7 @@ See the COPYING file for details.
 
 #include "GQShaderManager.h"
 
-class Cube {
+class Cube : protected QOpenGLExtraFunctions {
 public:
 	Cube();
 
