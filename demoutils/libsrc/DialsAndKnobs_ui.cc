@@ -23,6 +23,7 @@ See the COPYING file for details.
 #include <QMenu>
 #include <QAction>
 #include <QContextMenuEvent>
+#include <QRegularExpression>
 
 void FileNameLineEdit::setFromBrowser()
 {
@@ -64,7 +65,7 @@ ArbitraryPrecisionSpinBox::ArbitraryPrecisionSpinBox(QWidget* parent) :
 QString ArbitraryPrecisionSpinBox::textFromValue( double value ) const
 {
     QString str = QDoubleSpinBox::textFromValue(value);
-    int last_non_zero = str.lastIndexOf(QRegExp("[^0]"));
+    int last_non_zero = str.lastIndexOf(QRegularExpression("[^0]"));
     if (str[last_non_zero] == QWidget::locale().decimalPoint())
         last_non_zero--;
     return str.left(last_non_zero+1);

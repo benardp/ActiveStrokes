@@ -4,5 +4,11 @@ Makefile.Debug
 Makefile.Release
 *.o
 *.a
+*.prl
 moc_*.cpp
+moc_*.h
 ui_*.cpp
+ui_*.h
+qrc_*.cpp
+.vscode/
+.qmake.stash

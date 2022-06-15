@@ -375,7 +375,7 @@ bool ASSnakes::trim()
 
 void ASSnakes::splitAtIndices(ASContour* c, QList<int>& splitIndices)
 {
-    std::sort(splitIndices.begin(), splitIndices.end());
+    std::sort(splitIndices.begin(),splitIndices.end());
     QListIterator<int> it(splitIndices);
     it.toBack();
     while(it.hasPrevious()){
@@ -573,7 +573,7 @@ void ASSnakes::merge()
             if(neighbors.isEmpty())
                 continue;
 
-            std::sort(neighbors.begin(), neighbors.end());
+            std::sort(neighbors.begin(),neighbors.end());
 
             bool found = false;
             ASVertexContour* closestEndPt = 0;
@@ -851,7 +851,7 @@ void ASSnakes::splitAtJunctions()
             if(neighbors.isEmpty())
                 continue;
 
-            std::sort(neighbors.begin(), neighbors.end());
+            std::sort(neighbors.begin(),neighbors.end());
 
             bool found = false;
             ASVertexContour* closestEndPt;
@@ -1133,7 +1133,7 @@ bool ASSnakes::extend() {
 
             if(!neighborsCV.empty()){
 
-                std::sort(neighborsCV.begin(), neighborsCV.end());
+                std::sort(neighborsCV.begin(),neighborsCV.end());
 
                 bool canExtend = false;
                 ASClipVertex *cv;

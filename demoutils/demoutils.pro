@@ -23,7 +23,11 @@ else {
 }
 
 CONFIG += staticlib
-QT += opengl xml script
+QT += opengl xml qml
+
+equals (QT_MAJOR_VERSION, 6) {
+	QT += gui widgets
+}
 
 TARGET = demoutils
 

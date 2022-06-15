@@ -21,6 +21,7 @@ See the COPYING file for details.
 #include <QFile>
 #include <QList>
 #include <QTextStream>
+#include <QRegularExpression>
 
 // GQShaderRef
 
@@ -575,10 +576,10 @@ int GQShaderManager::filterWarnings( QStringList& log )
     QStringList level_0_warnings = QStringList() <<
         QString("WARNING: vertex shader writes varying '\\w+' which is not active.") <<
         QString("WARNING: Output of vertex shader '\\w+' not read by fragment shader");
-    QList<QRegExp> level_0_rx;
+    QList<QRegularExpression> level_0_rx;
     for (int i = 0; i < level_0_warnings.size(); i++)
     {
-        level_0_rx.append(QRegExp(level_0_warnings[i]));
+        level_0_rx.append(QRegularExpression(level_0_warnings[i]));
     }
 
     if (_warning_level > 0)
@@ -590,7 +591,8 @@ int GQShaderManager::filterWarnings( QStringList& log )
             bool filter = false;
             for (int i = 0; i < level_0_rx.size(); i++)
             {
-                if (level_0_rx[i].indexIn(val) == 0)
+                QRegularExpressionMatch match = level_0_rx[i].match(val); 
+                if (match.hasMatch())
                 {
                     filter = true;
                     break;

@@ -32,10 +32,14 @@ else {
 
 TRIMESH = trimesh
 
-QT += opengl xml script 
+QT += opengl xml qml
 
 equals (QT_MAJOR_VERSION, 5) {
     QT += openglextensions
+}
+
+equals (QT_MAJOR_VERSION, 6) {
+	QT += gui widgets openglwidgets
 }
 
 TARGET = qviewer

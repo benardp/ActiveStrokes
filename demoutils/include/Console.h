@@ -19,7 +19,7 @@ See the COPYING file for details.
 #include <QTextEdit>
 #include <QLineEdit>
 #include <QDockWidget>
-#include <QScriptEngine>
+#include <QJSEngine>
 #include <QStringList>
 #include <QProcess>
 
@@ -76,7 +76,7 @@ protected:
     CommandLine _command_line;
     QProcess _process;
     
-    QScriptEngine _engine;
+    QJSEngine _engine;
     ScriptUtilities _utils;
 
     static Console* _current_msg_console;

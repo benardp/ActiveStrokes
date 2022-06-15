@@ -49,7 +49,7 @@ GLViewer::GLViewer(QWidget* parent) : QGLViewer( parent )
 { 
     _inited = false;
     _visible = false;
-    _display_timers = false;
+    _display_timers = true;
     _new_scene = false;
     _scene = NULL;
     _ac_initialized = false;
@@ -167,6 +167,8 @@ void GLViewer::draw()
         perf.reset();
     }
 
+    __TIME_CODE_BLOCK("Total time");
+
     if(k_snapshot && _snapshotPath == ""){
         _snapshotPath = QFileDialog::getExistingDirectory(this,"Snapshot directory",QDir::currentPath(),
                                                           QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
@@ -179,7 +181,7 @@ void GLViewer::draw()
     camera()->getProjectionMatrix(proj_xf);
     _scene->setProjectionMatrix(proj_xf);
     qglviewer::Vec cameraPos = camera()->position();
-    _scene->setCameraPosition(vec4f(cameraPos[0],cameraPos[1],cameraPos[2],cameraPos[3]));
+    _scene->setCameraPosition(vec4f(cameraPos[0],cameraPos[1],cameraPos[2],1.f));
 
     _imgLines.drawScene(*_scene,!k_useSnakes && (k_drawRefImg != k_ref_list[4]));
 

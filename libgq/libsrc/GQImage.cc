@@ -351,7 +351,11 @@ bool GQFloatImage::loadPFM(const QString& filename)
     }
 
     QTextStream inputTextStream( &inputFile );
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     inputTextStream.setCodec( "ISO-8859-1" );
+#else
+    inputTextStream.setEncoding( QStringConverter::Latin1 );
+#endif
 
     // read header
     QString qsType;

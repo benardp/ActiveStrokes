@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
+CONFIG += debug_and_release
+
 SUBDIRS += libgq
 SUBDIRS += demoutils
 SUBDIRS += trimesh2

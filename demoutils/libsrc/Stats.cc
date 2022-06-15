@@ -70,29 +70,29 @@ void Stats::reset()
     // iterate over timers in reverse so that children are removed before parents
     for (int i = _records[TIMER].size()-1; i >= 0; i--)
     {
-        Record& timer = _records[TIMER][i];
-        if (timer.touches_since_last_reset == 0)
+        Record* timer = _records[TIMER][i];
+        if (timer->touches_since_last_reset == 0)
         {
             removeTimer(i);
         }
         else
         {
-            timer.value = 0;
-            timer.touches_since_last_reset = 0;
+            timer->value = 0;
+            timer->touches_since_last_reset = 0;
         }
     }
 
     for (int i = _records[COUNTER].size()-1; i >= 0; i--)
     {
-        Record& counter = _records[COUNTER][i];
-        if (counter.touches_since_last_reset == 0)
+        Record* counter = _records[COUNTER][i];
+        if (counter->touches_since_last_reset == 0)
         {
             removeCounter(i);
         }
         else
         {
-            counter.value = 0;
-            counter.touches_since_last_reset = 0;
+            counter->value = 0;
+            counter->touches_since_last_reset = 0;
         }
     }
 
@@ -136,9 +136,9 @@ int Stats::findTimer( const QString& name, const Record* parent )
     int index = -1;
     for (int i = 0; i < _records[TIMER].size(); i++)
     {
-        Record& timer = _records[TIMER][i];
-        if (timer.name == name &&
-            (parent == 0 || timer.parent == parent))
+        Record* timer = _records[TIMER][i];
+        if (timer->name == name &&
+            (parent == 0 || timer->parent == parent))
         {
             index = i;
             break;
@@ -152,7 +152,7 @@ int Stats::findTimer( const Record* pointer )
     int index = -1;
     for (int i = 0; i < _records[TIMER].size(); i++)
     {
-        if (&(_records[TIMER][i]) == pointer)
+        if (_records[TIMER][i] == pointer)
         {
             index = i;
             break;
@@ -166,7 +166,7 @@ int Stats::findCounter( const QString& name )
     int index = -1;
     for (int i = 0; i < _records[COUNTER].size(); i++)
     {
-        if (_records[COUNTER][i].name == name)
+        if (_records[COUNTER][i]->name == name)
         {
             index = i;
             break;
@@ -177,7 +177,7 @@ int Stats::findCounter( const QString& name )
 
 void Stats::removeTimer( int which )
 {
-    Record* timer = &(_records[TIMER][which]);
+    Record* timer = _records[TIMER][which];
     assert( timer->children.size() == 0 );
     Record* parent = &_headers[TIMER];
     if (timer->parent != nullptr)
@@ -196,14 +196,16 @@ void Stats::removeTimer( int which )
     }
 
     _records[TIMER].removeAt(which);
+    delete timer;
 }
     
 void Stats::removeCounter( int which )
 {
+    Record* counter = _records[COUNTER][which];
     Record* parent = &_headers[COUNTER];
     for (int i = 0; i < parent->children.size(); i++)
     {
-        if (parent->children[i] == &(_records[COUNTER][which]))
+        if (parent->children[i] == counter)
         {
             parent->children.removeAt(i);
             _layout_changed = true;
@@ -212,6 +214,7 @@ void Stats::removeCounter( int which )
     }
 
     _records[COUNTER].removeAt(which);
+    delete counter;
 }
 
 void Stats::startTimer( const QString& name )
@@ -220,35 +223,34 @@ void Stats::startTimer( const QString& name )
     if (index == -1)
     {
         index = _records[TIMER].size();
-        Record newtimer;
-        newtimer.name = name;
-        newtimer.category = TIMER;
-        newtimer.stamp = now();
-        newtimer.value = 0;
+        Record* newtimer = new Record();;
+        newtimer->name = name;
+        newtimer->category = TIMER;
+        newtimer->stamp = now();
+        newtimer->value = 0;
         _records[TIMER].append(newtimer);
-        Record* pointer = &(_records[TIMER].last());
 
         if (_timer_stack.size() > 0)
         {
-            assert( findTimer(_timer_stack.last()) < findTimer(pointer) );
-            pointer->parent = _timer_stack.last();
-            _timer_stack.last()->children.append(pointer);
+            assert( findTimer(_timer_stack.last()) < findTimer(newtimer) );
+            newtimer->parent = _timer_stack.last();
+            _timer_stack.last()->children.append(newtimer);
         }
         else
         {
-            pointer->parent = &_headers[TIMER];
-            _headers[TIMER].children.append(pointer);
+            newtimer->parent = &_headers[TIMER];
+            _headers[TIMER].children.append(newtimer);
         }
 
         _layout_changed = true;
     }
     else
     {
-        _records[TIMER][index].stamp = now();
+        _records[TIMER][index]->stamp = now();
     }
 
-    _records[TIMER][index].touches_since_last_reset++;
-    _timer_stack.append(&(_records[TIMER][index]));
+    _records[TIMER][index]->touches_since_last_reset++;
+    _timer_stack.append(_records[TIMER][index]);
 }
 
 void Stats::stopTimer( const QString& name )
@@ -256,7 +258,8 @@ void Stats::stopTimer( const QString& name )
 #ifdef QT_NO_DEBUG
     Q_UNUSED(name);
 #endif
-    assert( _timer_stack.size() > 0 && _timer_stack.last()->name == name );
+    assert( _timer_stack.size() > 0);
+    assert( _timer_stack.last()->name == name );
     Record* rec = _timer_stack.last();
 
     rec->value += now() - rec->stamp;
@@ -271,23 +274,23 @@ void Stats::setCounter( const QString& name, float value )
     if (index == -1)
     {
         index = _records[COUNTER].size();
-        Record newcounter;
-        newcounter.name = name;
-        newcounter.category = COUNTER;
-        newcounter.value = value;
-        newcounter.parent = &_headers[COUNTER];
+        Record* newcounter = new Record();
+        newcounter->name = name;
+        newcounter->category = COUNTER;
+        newcounter->value = value;
+        newcounter->parent = &_headers[COUNTER];
 
         _records[COUNTER].append(newcounter);
-        _headers[COUNTER].children.append(&(_records[COUNTER][index]));
+        _headers[COUNTER].children.append(_records[COUNTER][index]);
 
         _layout_changed = true;
     }
     else
     {
-        _records[COUNTER][index].value = value;
+        _records[COUNTER][index]->value = value;
         _data_changed = true;
     }
-    _records[COUNTER][index].touches_since_last_reset++;
+    _records[COUNTER][index]->touches_since_last_reset++;
 }
 
 void Stats::addToCounter( const QString& name, float value )
@@ -296,32 +299,32 @@ void Stats::addToCounter( const QString& name, float value )
     if (index == -1)
     {
         index = _records[COUNTER].size();
-        Record newcounter;
-        newcounter.name = name;
-        newcounter.category = COUNTER;
-        newcounter.value = value;
-        newcounter.parent = &_headers[COUNTER];
+        Record* newcounter = new Record();
+        newcounter->name = name;
+        newcounter->category = COUNTER;
+        newcounter->value = value;
+        newcounter->parent = &_headers[COUNTER];
 
         _records[COUNTER].append(newcounter);
-        _headers[COUNTER].children.append(&(_records[COUNTER][index]));
+        _headers[COUNTER].children.append(_records[COUNTER][index]);
 
         _layout_changed = true;
     }
     else
     {
-        _records[COUNTER][index].value += value;
+        _records[COUNTER][index]->value += value;
         _data_changed = true;
     }
-    _records[COUNTER][index].touches_since_last_reset++;
+    _records[COUNTER][index]->touches_since_last_reset++;
 }
 
 void Stats::beginConstantGroup( const QString& name )
 {
-    Record newgroup;
-    newgroup.name = name;
-    newgroup.category = CONSTANT;
+    Record* newgroup = new Record();
+    newgroup->name = name;
+    newgroup->category = CONSTANT;
     _records[CONSTANT].append(newgroup);
-    Record* ptr = &_records[CONSTANT].last();
+    Record* ptr = _records[CONSTANT].last();
 
     if (_constant_stack.size() > 0)
     {
@@ -361,12 +364,12 @@ void Stats::setConstant( const QString& name, const QString& value )
 
     if (!found)
     {
-        Record constant;
-        constant.name = name;
-        constant.category = CONSTANT;
-        constant.str_value = value;
+        Record* constant = new Record();
+        constant->name = name;
+        constant->category = CONSTANT;
+        constant->str_value = value;
         _records[CONSTANT].append(constant);
-        Record* ptr = &_records[CONSTANT].last();
+        Record* ptr = _records[CONSTANT].last();
 
         if (_constant_stack.size() > 0)
         {
@@ -416,12 +419,12 @@ QString Stats::timerStatistics( const QString& name )
             return QString("Timer not found (%1).").arg(name);
     }
 
-    const Record& timer = _records[TIMER][timer_index];
+    Record* timer = _records[TIMER][timer_index];
     float average = 0;
-    if (timer.touches_since_last_reset > 0)
-        average = timer.value / (float)timer.touches_since_last_reset;
+    if (timer->touches_since_last_reset > 0)
+        average = timer->value / (float)timer->touches_since_last_reset;
     QString output = QString("%1: %2 total time, %3 calls, %4 average").
-        arg(name).arg(timer.value).arg(timer.touches_since_last_reset).arg(average);
+        arg(name).arg(timer->value).arg(timer->touches_since_last_reset).arg(average);
     return output;
 }
 

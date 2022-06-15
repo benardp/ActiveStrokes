@@ -22,6 +22,8 @@ See the COPYING file for details.
 #include <QAbstractItemModel>
 #include <QDockWidget>
 
+using trimesh::timestamp;
+
 class QMenu;
 class QMainWindow;
 
@@ -52,15 +54,15 @@ class Stats : public QAbstractItemModel
 
     int numTimers() const { return _records[TIMER].size(); }
     const QString& timerName( int which ) const 
-        { return _records[TIMER][which].name; }
+        { return _records[TIMER][which]->name; }
     float timerValue( int which ) const 
-        { return _records[TIMER][which].value; }
+        { return _records[TIMER][which]->value; }
     
     int numCounters() const { return _records[COUNTER].size(); }
     const QString& counterName( int which ) const 
-        { return _records[COUNTER][which].name; }
+        { return _records[COUNTER][which]->name; }
     float counterValue( int which ) const 
-        { return _records[COUNTER][which].value; }
+        { return _records[COUNTER][which]->value; }
 
     QString timerStatistics( const QString& name );
 
@@ -88,7 +90,7 @@ class Stats : public QAbstractItemModel
       public:
         QString     name;
         Category    category;
-        trimesh::timestamp   stamp;
+        timestamp   stamp;
         double      value;
         QString     str_value;
         int         touches_since_last_reset;
@@ -114,7 +116,7 @@ class Stats : public QAbstractItemModel
     void removeCounter( int which );
 
   protected:
-    QList<Record>       _records[NUM_CATEGORIES];
+    QList<Record*>      _records[NUM_CATEGORIES];
     Record              _headers[NUM_CATEGORIES];
 
     QList<Record*>      _timer_stack;

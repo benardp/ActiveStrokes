@@ -47,7 +47,7 @@ Console::Console(QMainWindow* parent, QMenu* window_menu) :
 
     connect( &_process, SIGNAL(readyReadStandardOutput()), this, 
         SLOT(getProcessStdout()) );
-    _process.setReadChannelMode( QProcess::MergedChannels );
+    _process.setProcessChannelMode( QProcess::MergedChannels );
     _process.setReadChannel( QProcess::StandardOutput );
 
     connect(&_command_line, SIGNAL(editingFinished()), this, 
@@ -81,11 +81,9 @@ void Console::processCommand()
     }
     
     print(">> " + command + "\n");
-    QScriptValue r = _engine.evaluate(command);
-    if (_engine.hasUncaughtException()) {
-        QStringList backtrace = _engine.uncaughtExceptionBacktrace();
-        qDebug("    %s\n%s\n", qPrintable(r.toString()),
-               qPrintable(backtrace.join("\n")));
+    QJSValue r = _engine.evaluate(command);
+    if (r.isError()) {
+        qDebug("    %s\n", qPrintable(r.toString()));
     }
     _command_line.clear();
 }
@@ -100,11 +98,9 @@ void Console::runScript(const QString& filename)
     
     QTextStream in(&file);
     QString program = in.readAll();
-    QScriptValue r = _engine.evaluate(program);
-    if (_engine.hasUncaughtException()) {
-        QStringList backtrace = _engine.uncaughtExceptionBacktrace();
-        qDebug("    %s\n%s\n", qPrintable(r.toString()),
-               qPrintable(backtrace.join("\n")));
+    QJSValue r = _engine.evaluate(program);
+    if (r.isError()) {
+        qDebug("    %s\n", qPrintable(r.toString()));
     } else {
         qDebug("ok.");
     }
@@ -161,12 +157,12 @@ void Console::msgHandler(QtMsgType type, const QMessageLogContext &context, cons
 
 bool Console::exposeObjectToScript(QObject* object, const QString& name)
 {
-    if (_engine.globalObject().property(name).isValid()) {
+    if (_engine.globalObject().hasProperty(name)) {
         qDebug("Console already has a %s", qPrintable(name));
         return false;
     }
     
-    QScriptValue value = _engine.newQObject(object);
+    QJSValue value = _engine.newQObject(object);
     _engine.globalObject().setProperty(name, value);
 
     return true;

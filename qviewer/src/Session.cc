@@ -12,7 +12,6 @@ See the COPYING file for details.
 #include "Session.h"
 #include "Console.h"
 
-#include <QScriptEngine>
 #include <GQInclude.h>
 #include <QFile>
 #include <QDomDocument>

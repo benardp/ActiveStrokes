@@ -27,6 +27,10 @@ else {
 CONFIG += staticlib
 QT += opengl xml
 
+equals (QT_MAJOR_VERSION, 6) {
+        QT += gui widgets
+}
+
 TARGET = npr
 
 DEPENDPATH += include

@@ -32,6 +32,7 @@ See the COPYING file for details.
 #include <QLineEdit>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QActionGroup>
 
 #include <DialsAndKnobs_ui.h>
 
@@ -1087,9 +1088,9 @@ void DialsAndKnobs::addStringListWidgets(dkStringList* dk_string_list)
             connect(action, SIGNAL(triggered()), 
                     dk_string_list->_signal_mapper, SLOT(map()));
         }
-        connect(dk_string_list->_signal_mapper, SIGNAL(mapped(int)),
+        connect(dk_string_list->_signal_mapper, SIGNAL(mappedInt(int)),
                 dk_string_list, SLOT(setIndex(int)));
-        connect(dk_string_list->_signal_mapper, SIGNAL(mapped(int)),
+        connect(dk_string_list->_signal_mapper, SIGNAL(mappedInt(int)),
                 this, SLOT(dkValueChanged()));
     }
 }

@@ -17,7 +17,7 @@ See the COPYING file for details.
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSignalMapper>
 
 #include "GLViewer.h"
@@ -253,7 +253,7 @@ void MainWindow::updateRecentScenesMenu()
             }
         }
     }
-    connect(&_recent_scenes_mapper, SIGNAL(mapped(int)),
+    connect(&_recent_scenes_mapper, SIGNAL(mappedInt(int)),
             this, SLOT(on_actionOpen_Recent_Scene_triggered(int)));
 }
 
@@ -444,7 +444,7 @@ void MainWindow::setupViewerResizeActions(QMenu* menu)
         resize_menu->addAction(size_action);
     }
 
-    connect(&_viewer_size_mapper, SIGNAL(mapped(const QString&)),
+    connect(&_viewer_size_mapper, SIGNAL(mappedString(const QString&)),
             this, SLOT(resizeToFitViewerSize(const QString&)));
 
     menu->addMenu(resize_menu);
@@ -470,7 +470,7 @@ QString MainWindow::myFileDialog( int mode, const QString& caption,
                 int last_pos = filter.indexOf("*.", 0);
                 while (last_pos > 0)
                 {
-                    int ext_end = filter.indexOf(QRegExp("[ ;)]"), last_pos);
+                    int ext_end = filter.indexOf(QRegularExpression("[ ;)]"), last_pos);
                     acceptable_extensions << filter.mid(last_pos+1,
                                                         ext_end-last_pos-1);
                     last_pos = filter.indexOf("*.", last_pos+1);
