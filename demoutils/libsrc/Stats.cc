@@ -10,11 +10,13 @@ See the COPYING file for details.
 \*****************************************************************************/
 
 #include "Stats.h"
-#include "timestamp.h"
+#include <timestamp.h>
 #include <assert.h>
 #include <QTreeView>
 #include <QMainWindow>
 #include <QMenu>
+
+using namespace trimesh;
 
 Stats Stats::_global_instance;
 
@@ -447,7 +449,7 @@ QVariant Stats::data( const QModelIndex& index, int role ) const
         }
         else if (node->category == TIMER)
         {
-            ret = QString::number(node->value, 'f', 3);
+            ret = QString::number(node->value, 'g', 6);
         }
         else if (node->category == COUNTER)
         {

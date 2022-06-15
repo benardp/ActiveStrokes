@@ -531,8 +531,7 @@ void ASBrushPath::computeTangent()
     for (int i=0; i<nbVertices()-1; i++)
     {
         fol_pos = at(i+1)->position();
-        tangent = fol_pos - prev_pos;
-        tangent = normalize(tangent);
+        tangent = normalized(fol_pos - prev_pos);
         if(_reversed)
             tangent *= -1;
         normal = vec2(-tangent[1],tangent[0]);
@@ -553,12 +552,10 @@ void ASBrushPath::computeTangent()
     if (_closed)
     {
         fol_pos = at(0)->position();
-        tangent = fol_pos - prev_pos;
-        tangent = normalize(tangent);
+        tangent = normalized(fol_pos - prev_pos);
     }else{
         fol_pos = at(nbVertices()-1)->position();
-        tangent = fol_pos - prev_pos;
-        tangent = normalize(tangent);
+        tangent = normalized(fol_pos - prev_pos);
     }
     if(_reversed)
         tangent *= -1;

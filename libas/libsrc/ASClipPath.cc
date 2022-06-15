@@ -269,7 +269,7 @@ void ASClipPathSet::initFromPoints(const QVector<vec>& sample_positions2D,
         vec3 projPos = sample_positions2D.at(i);
         vec3 clipPos = clipToViewport(vec4(projPos[0],projPos[1],projPos[2],1.f));
         ASClipVertex* cv = new ASClipVertex(clipPos, sample_positions.at(i),
-                                              vec2(i,0), 0, p, 1.0, sample_strengths.at(i));
+                                              vec2(float(i),0), 0, p, 1.0, sample_strengths.at(i));
         cv->setTangent(sample_tangents.at(i));
         p->addVertex(cv);
         _paths << p;

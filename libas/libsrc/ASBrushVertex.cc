@@ -146,5 +146,5 @@ float ASBrushVertex::slope() {
 }
 
 void ASBrushVertex::updatePenWidth() {
-    _penWidth = min(1.0f,0.1f*_penWidth + 0.9f*_prevPenWidth);
+    _penWidth = std::min(1.0f,0.1f*_penWidth + 0.9f*_prevPenWidth);
 }

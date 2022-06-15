@@ -43,6 +43,8 @@ See the COPYING file for details.
 
 #include "DialsAndKnobs.h"
 
+using trimesh::TriMesh;
+
 enum ModelType
 {
 	CUBE,
@@ -54,9 +56,9 @@ enum ModelType
 struct Mesh {
     Mesh(TriMesh* m, const QString& f) : trimesh(m), filename(f) {}
     ~Mesh() { delete trimesh; }
-    TriMesh*             trimesh;
+    TriMesh*    trimesh;
     QString              filename;
-    GQVertexBufferSet   vertex_buffer_set;
+    GQVertexBufferSet    vertex_buffer_set;
     QVector<int>		 tristrips;
 };
 

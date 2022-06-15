@@ -431,7 +431,7 @@ void MainWindow::on_actionReload_Shaders_triggered()
 void MainWindow::setupViewerResizeActions(QMenu* menu)
 {
     QStringList sizes = QStringList() << "512x512" <<
-                                         "640x480" << "800x600" << "1024x768" << "1024x1024";
+                                         "640x480" << "800x600" << "1024x768" << "1024x1024" << "1920x1080";
 
     QMenu* resize_menu = menu->addMenu("&Resize Viewer");
 

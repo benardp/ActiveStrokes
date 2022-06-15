@@ -6,96 +6,31 @@ Princeton University
 
 TriMesh.h
 Class for triangle meshes.
-
-Modified by Forrester Cole (fcole@cs.princeton.edu)
-to include rudimentary support for texture coordinates.
 */
 
 #include "Vec.h"
+#include "Box.h"
 #include "Color.h"
+#include "strutil.h"
 #include <vector>
-#include <limits>
-using std::vector;
 
+
+namespace trimesh {
+
+template <class T>
+static inline void clear_and_release(::std::vector<T> &v)
+{
+	// Standard trick to release a vector's storage, since clear() doesn't
+	::std::vector<T>().swap(v);
+}
 
 class TriMesh {
-protected:
-	static bool read_helper(const char *filename, TriMesh *mesh);
-
 public:
+	//
 	// Types
-	struct Face {
-		int v[3];
-
-		Face() {}
-		Face(const int &v0, const int &v1, const int &v2)
-			{ v[0] = v0; v[1] = v1; v[2] = v2; }
-		Face(const int *v_)
-			{ v[0] = v_[0]; v[1] = v_[1]; v[2] = v_[2]; }
-		int &operator[] (int i) { return v[i]; }
-		const int &operator[] (int i) const { return v[i]; }
-		operator const int * () const { return &(v[0]); }
-		operator const int * () { return &(v[0]); }
-		operator int * () { return &(v[0]); }
-		int indexof(int v_) const
-		{
-			return (v[0] == v_) ? 0 :
-			       (v[1] == v_) ? 1 :
-			       (v[2] == v_) ? 2 : -1;
-		}
-	};
-
-	class BBox {
-	public:
-		point min, max;
-		bool valid;
-
-		// Construct as empty
-		BBox() : min(point(std::numeric_limits<float>::max(),
-		                   std::numeric_limits<float>::max(),
-		                   std::numeric_limits<float>::max())),
-		         max(point(std::numeric_limits<float>::min(),
-		                   std::numeric_limits<float>::min(),
-		                   std::numeric_limits<float>::min())),
-			 valid(false)
-			{}
-
-		// Initialize to one point or two points
-		BBox(const point &p) : min(p), max(p), valid(true)
-			{}
-		BBox(const point &min_, const point &max_) :
-			min(min_), max(max_), valid(true)
-			{}
-
-		// Mark invalid
-		void clear()
-		{
-			min = point(std::numeric_limits<float>::max(),
-		                    std::numeric_limits<float>::max(),
-		                    std::numeric_limits<float>::max());
-			max = point(std::numeric_limits<float>::min(),
-		                    std::numeric_limits<float>::min(),
-		                    std::numeric_limits<float>::min());
-			valid = false;
-		}
-
-		// Return center point and (vector) diagonal
-		point center() const { return 0.5f * (min+max); }
-		vec size() const { return max - min; }
-
-		// Grow a bounding box to encompass a point
-		BBox &operator += (const point &p)
-			{ min.min(p); max.max(p); return *this; }
-		BBox &operator += (const BBox &b)
-			{ min.min(b.min); max.max(b.max); return *this; }
-
-		// The following appear to be necessary for Visual Studio,
-		// despite the fact that the operators shouldn't need
-		// to be friends...
-		friend const TriMesh::BBox operator + (const TriMesh::BBox &b, const point &p);
-		friend const TriMesh::BBox operator + (const point &p, const TriMesh::BBox &b);
-		friend const TriMesh::BBox operator + (const TriMesh::BBox &b1, const TriMesh::BBox &b2);
-	};
+	//
+	typedef Vec<3,int> Face;
+	typedef Box<3,float> BBox;
 
 	struct BSphere {
 		point center;
@@ -105,39 +40,58 @@ public:
 			{}
 	};
 
+	//
 	// Enums
-	enum tstrip_rep { TSTRIP_LENGTH, TSTRIP_TERM };
+	//
+	enum TstripRep { TSTRIP_LENGTH, TSTRIP_TERM };
 	enum { GRID_INVALID = -1 };
+	enum StatOp {
+		STAT_MIN, STAT_MINABS, STAT_MAX, STAT_MAXABS,
+		STAT_SUM, STAT_SUMABS, STAT_SUMSQR,
+		STAT_MEAN, STAT_MEANABS, STAT_RMS,
+		STAT_MEDIAN, STAT_STDEV };
+	enum StatVal { STAT_VALENCE, STAT_FACEAREA, STAT_ANGLE,
+		STAT_DIHEDRAL, STAT_EDGELEN, STAT_X, STAT_Y, STAT_Z };
+
+	//
+	// Constructor
+	//
+	TriMesh() : grid_width(-1), grid_height(-1), flag_curr(0)
+		{}
+
+	//
+	// Members
+	//
 
 	// The basics: vertices and faces
-	vector<point> vertices;
-	vector<Face> faces;
+	::std::vector<point> vertices;
+	::std::vector<Face> faces;
 
 	// Triangle strips
-	vector<int> tstrips;
+	::std::vector<int> tstrips;
 
 	// Grid, if present
-	vector<int> grid;
+	::std::vector<int> grid;
 	int grid_width, grid_height;
 
 	// Other per-vertex properties
-	vector<Color> colors;
-	vector<float> confidences;
-	vector<unsigned> flags;
+	::std::vector<Color> colors;
+	::std::vector<float> confidences;
+	::std::vector<unsigned> flags;
 	unsigned flag_curr;
 
 	// Computed per-vertex properties
-	vector<vec> normals;
-	vector<vec> pdir1, pdir2;
-	vector<float> curv1, curv2;
-	vector< Vec<4,float> > dcurv;
-	vector<vec> cornerareas;
-	vector<float> pointareas;
+	::std::vector<vec> normals;
+	::std::vector<vec> pdir1, pdir2;
+	::std::vector<float> curv1, curv2;
+	::std::vector< Vec<4,float> > dcurv;
+	::std::vector<vec> cornerareas;
+	::std::vector<float> pointareas;
 
-    // Texture coordinate properties
-    vector<vec2> texcoords;
-    vector<Face> texfaces;
-    vector<vec> udirs, vdirs;
+	// Texture coordinate properties
+	::std::vector<vec2> texcoords;
+	::std::vector<Face> texfaces;
+	::std::vector<vec> udirs, vdirs;
 
 	// Bounding structures
 	BBox bbox;
@@ -145,19 +99,17 @@ public:
 
 	// Connectivity structures:
 	//  For each vertex, all neighboring vertices
-	vector< vector<int> > neighbors;
+	::std::vector< ::std::vector<int> > neighbors;
 	//  For each vertex, all neighboring faces
-	vector< vector<int> > adjacentfaces;
+	::std::vector< ::std::vector<int> > adjacentfaces;
 	//  For each face, the three faces attached to its edges
 	//  (for example, across_edge[3][2] is the number of the face
 	//   that's touching the edge opposite vertex 2 of face 3)
-	vector<Face> across_edge;
+	::std::vector<Face> across_edge;
 
+	//
 	// Compute all this stuff...
-	void need_tstrips();
-	void convert_strips(tstrip_rep rep);
-	void unpack_tstrips();
-	void triangulate_grid();
+	//
 	void need_faces()
 	{
 		if (!faces.empty())
@@ -167,39 +119,139 @@ public:
 		else if (!grid.empty())
 			triangulate_grid();
 	}
-	void need_normals();
-	void need_pointareas();
+	void need_tstrips(TstripRep rep = TSTRIP_LENGTH);
+	void convert_strips(TstripRep rep);
+	void unpack_tstrips();
+	void resize_grid(int width, int height)
+	{
+		grid_width = width;
+		grid_height = height;
+		grid.clear();
+		grid.resize(grid_width * grid_height, GRID_INVALID);
+	}
+	void triangulate_grid(bool remove_slivers = true);
+	void need_normals(bool simple_area_weighted = false);
 	void need_curvatures();
 	void need_dcurv();
+	void need_pointareas();
 	void need_bbox();
 	void need_bsphere();
 	void need_neighbors();
 	void need_adjacentfaces();
 	void need_across_edge();
-    void need_uv_dirs();
+	void need_uv_dirs();
 
-	// Input and output
-	static TriMesh *read(const char *filename);
-	bool write(const char *filename);
-
-	// Statistics
-	// XXX - Add stuff here
-	float feature_size();
-
-	// Useful queries
-	// XXX - Add stuff here
-	bool is_bdy(int v)
+	//
+	// Delete everything and release storage
+	//
+	void clear_vertices()      { clear_and_release(vertices); }
+	void clear_faces()         { clear_and_release(faces); }
+	void clear_tstrips()       { clear_and_release(tstrips); }
+	void clear_grid()          { clear_and_release(grid);
+	                             grid_width = grid_height = -1;}
+	void clear_colors()        { clear_and_release(colors); }
+	void clear_confidences()   { clear_and_release(confidences); }
+	void clear_flags()         { clear_and_release(flags); flag_curr = 0; }
+	void clear_normals()       { clear_and_release(normals); }
+	void clear_curvatures()    { clear_and_release(pdir1);
+	                             clear_and_release(pdir2);
+	                             clear_and_release(curv1);
+	                             clear_and_release(curv2); }
+	void clear_dcurv()         { clear_and_release(dcurv); }
+	void clear_pointareas()    { clear_and_release(pointareas);
+	                             clear_and_release(cornerareas); }
+	void clear_bbox()          { bbox.clear(); }
+	void clear_bsphere()       { bsphere.valid = false; }
+	void clear_neighbors()     { clear_and_release(neighbors); }
+	void clear_adjacentfaces() { clear_and_release(adjacentfaces); }
+	void clear_across_edge()   { clear_and_release(across_edge); }
+	void clear()
 	{
-		if (neighbors.empty()) need_neighbors();
-		if (adjacentfaces.empty()) need_adjacentfaces();
+		clear_vertices(); clear_faces(); clear_tstrips(); clear_grid();
+		clear_colors(); clear_confidences(); clear_flags();
+		clear_normals(); clear_curvatures(); clear_dcurv();
+		clear_pointareas(); clear_bbox(); clear_bsphere();
+		clear_neighbors(); clear_adjacentfaces(); clear_across_edge();
+	}
+
+	//
+	// Input and output
+	//
+protected:
+	static bool read_helper(const char *filename, TriMesh *mesh);
+public:
+	static TriMesh *read(const char *filename);
+	static TriMesh *read(const ::std::string &filename);
+	bool write(const char *filename);
+	bool write(const ::std::string &filename);
+
+
+	//
+	// Useful queries
+	//
+
+	// Is vertex v on the mesh boundary?
+	inline bool is_bdy(int v)
+	{
+		if (unlikely(neighbors.empty())) need_neighbors();
+		if (unlikely(adjacentfaces.empty())) need_adjacentfaces();
 		return neighbors[v].size() != adjacentfaces[v].size();
 	}
-	vec trinorm(int f)
+
+	// Centroid of face f
+	inline vec centroid(int f)
 	{
-		if (faces.empty()) need_faces();
-		return ::trinorm(vertices[faces[f][0]], vertices[faces[f][1]],
-			vertices[faces[f][2]]);
+		if (unlikely(faces.empty())) need_faces();
+		return (1.0f / 3.0f) *
+			(vertices[faces[f][0]] +
+			 vertices[faces[f][1]] +
+			 vertices[faces[f][2]]);
 	}
+
+	// Normal of face f
+	inline vec trinorm(int f)
+	{
+		if (unlikely(faces.empty())) need_faces();
+		return trimesh::trinorm(vertices[faces[f][0]],
+			vertices[faces[f][1]], vertices[faces[f][2]]);
+	}
+
+	// Angle of corner j in triangle i
+	inline float cornerangle(int i, int j)
+	{
+		using namespace ::std;
+
+		if (unlikely(faces.empty())) need_faces();
+		const point &p0 = vertices[faces[i][j]];
+		const point &p1 = vertices[faces[i][NEXT_MOD3(j)]];
+		const point &p2 = vertices[faces[i][PREV_MOD3(j)]];
+		return acos((p1 - p0) DOT (p2 - p0));
+	}
+
+	// Dihedral angle between face i and face across_edge[i][j]
+	inline float dihedral(int i, int j)
+	{
+		if (unlikely(across_edge.empty())) need_across_edge();
+		if (unlikely(across_edge[i][j] < 0)) return 0.0f;
+		vec mynorm = trinorm(i);
+		vec othernorm = trinorm(across_edge[i][j]);
+		float ang = angle(mynorm, othernorm);
+		vec towards = 0.5f * (vertices[faces[i][NEXT_MOD3(j)]] +
+		                      vertices[faces[i][PREV_MOD3(j)]]) -
+		              vertices[faces[i][j]];
+		if ((towards DOT othernorm) < 0.0f)
+			return M_PIf + ang;
+		else
+			return M_PIf - ang;
+	}
+
+	// Statistics
+	float stat(StatOp op, StatVal val);
+	float feature_size();
+
+	//
+	// Debugging
+	//
 
 	// Debugging printout, controllable by a "verbose"ness parameter
 	static int verbose;
@@ -213,24 +265,8 @@ public:
 	static void set_eprintf_hook(void (*hook)(const char *));
 	static void eprintf(const char *format, ...);
 
-	// Constructor
-	TriMesh() : grid_width(-1), grid_height(-1), flag_curr(0)
-		{}
 };
 
-inline const TriMesh::BBox operator + (const TriMesh::BBox &b, const point &p)
-{
-	return TriMesh::BBox(b) += p;
-}
-
-inline const TriMesh::BBox operator + (const point &p, const TriMesh::BBox &b)
-{
-	return TriMesh::BBox(b) += p;
-}
-
-inline const TriMesh::BBox operator + (const TriMesh::BBox &b1, const TriMesh::BBox &b2)
-{
-	return TriMesh::BBox(b1) += b2;
-}
+} // namespace trimesh
 
 #endif

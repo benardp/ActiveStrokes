@@ -248,7 +248,7 @@ int                     GQShaderManager::_current_program_ref_count = 0;
 QStringList GQShaderManager::getProgramsList()
 {
 	QStringList list = _program_hash.keys();
-	qSort(list);
+	std::sort(list.begin(), list.end());
 	return list;
 }
 

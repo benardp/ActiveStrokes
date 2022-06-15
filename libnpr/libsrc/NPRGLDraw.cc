@@ -98,7 +98,7 @@ void NPRGLDraw::setUniformViewParams(const GQShaderRef& shader)
     int inverse_projection_id = shader.uniformLocation("inverse_projection");
     if (inverse_projection_id >= 0)
     {
-        XForm<float> inverse_projection = XForm<float>(proj);
+        fxform inverse_projection = fxform(proj);
         invert(inverse_projection);
         glFuncs.glUniformMatrix4fv(inverse_projection_id, 1, GL_FALSE, inverse_projection);
     }

@@ -15,7 +15,7 @@ See the COPYING file for details.
 #ifndef CELL_H_
 #define CELL_H_
 
-#include "Vec.h"
+#include "GQInclude.h"
 #include "ASVertexContour.h"
 #include "ASClipPath.h"
 
@@ -33,7 +33,7 @@ public:
     void removeContourVertices(ASContour* c);
     QListIterator<ASVertexContour*> contourVerticesIterator() { return QListIterator<ASVertexContour*>(_contourVertices); }
     void addContourVertex(ASVertexContour* v, bool checkPresence=true);
-    void addContourVertices(ASContour* c, ivec2 oGrid, int cellSize, bool checkPresence=true);
+    void addContourVertices(ASContour* c, vec2i oGrid, int cellSize, bool checkPresence=true);
 
     int nbEndPoints() const { return _endPoints.size(); }
     ASVertexContour* endPoint(uint i) { return _endPoints.at(i); }

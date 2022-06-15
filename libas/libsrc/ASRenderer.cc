@@ -16,6 +16,7 @@ See the COPYING file for details.
 
 #include "NPRGLDraw.h"
 #include "GQDraw.h"
+#include "Stats.h"
 
 static dkFloat k_lineWidth("Contours->Draw->Thickness", 1.0,0.1,100.0,1.0);
 static dkBool  k_drawVerticies("Contours->Draw->Vertices", true);
@@ -181,7 +182,7 @@ void ASRenderer::renderStrokes()
     int row = 0;
     while(segments_remaining > 0)
     {
-        int count = min(segments_remaining, _clip_buf_width);
+        int count = std::min(segments_remaining, _clip_buf_width);
         shader.setUniform1f("row", row);
         reportGLError();
         glBegin(GL_POINTS);
@@ -617,7 +618,7 @@ bool ASRenderer::makePathVertexFBO()
 
     _clip_buf_width = GQFramebufferObject::maxFramebufferSize();
     int clip_buf_height = ceil(((double)_total_segments) / (double)_clip_buf_width);
-    clip_buf_height = max(clip_buf_height,1);
+    clip_buf_height = std::max(clip_buf_height,1);
     if (clip_buf_height > _clip_buf_width)
     {
         qCritical("Too many segments for clip buffer (%d, max is %d)\n",

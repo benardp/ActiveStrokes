@@ -67,7 +67,7 @@ ImageSpaceLines::~ImageSpaceLines()
 
 void ImageSpaceLines::drawScene(Scene& scene, bool visualize)
 {
-    __TIME_CODE_BLOCK("Draw Scene (img)");
+    __TIME_CODE_BLOCK("Extract samples");
 
     if (GQShaderManager::status() == GQ_SHADERS_NOT_LOADED)
     {
@@ -409,9 +409,9 @@ void ImageSpaceLines::readbackSamples(xform &proj_xf, xform &mv_xf, bool read_mo
         _prevGeomFlow->resize(prevClipPathSize,1,3);
 
         for(int i=0; i<prevClipPathSize; i++){
-            const vec& prevPos_world = (*_clip_path_set[i])[0]->position3D();
+            vec3 prevPos_world = (*_clip_path_set[i])[0]->position3D();
 
-            vec newPos = proj_xf * mv_xf * prevPos_world;
+            vec3 newPos = proj_xf * mv_xf * prevPos_world;
             vec3 clipPos = ASClipPathSet::clipToViewport(vec4(newPos[0],newPos[1],newPos[2],1.f),viewport,depthRange);
 
             if(isnan(clipPos[0]) || isnan(clipPos[1]) || isnan(clipPos[2])){

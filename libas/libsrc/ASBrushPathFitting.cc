@@ -164,7 +164,7 @@ float ASBrushPathFitting::testLine(int numPoints, const vec2 *points, float &A, 
         center /= float(numPoints);
 
         vec2 normalDir1 = vec2(A, B);
-        normalDir1 = normalize(normalDir1);
+        normalize(normalDir1);
         vec2 normalDir2 = -normalDir1;
         C = 1000.0f;
         center1 = center + normalDir1 * C;
@@ -337,8 +337,7 @@ void ASBrushPathFitting::calculateArcPosition(ASBrushPath * bp)
     }
 
     pos1 = bp->at(0)->sample()->position();
-    dir1 = pos1 - center;
-    dir1 = normalize(dir1);
+    dir1 = normalized(pos1 - center);
     nPos1 = center + dir1 * float(radius); //the first point on the arc
 
     double finalAngle = determineSweepingAngle(bp, center, radius);
@@ -360,7 +359,7 @@ void ASBrushPathFitting::calculateArcPosition(ASBrushPath * bp)
         offset[0] = pos DOT tangent;
         offset[1] = pos DOT normal;
 
-        float t = min(1.0, k_fittingMaxDistance / dist(offset, bp->at(j)->offset()));
+        float t = std::min(1.0, k_fittingMaxDistance / dist(offset, bp->at(j)->offset()));
         if (k_fittingAveraging && !bp->isNewFitting())
             offset = bp->at(j)->offset() * (1 - t) + t * offset;
 
@@ -581,13 +580,11 @@ double ASBrushPathFitting::determineSweepingAngle(ASBrushPath *bp, vec2 center, 
     int numSamples = bp->nbVertices();
 
     pos1 = bp->at(0)->sample()->position();
-    dir1 = pos1 - center;
-    dir1 = normalize(dir1);
+    dir1 = normalized(pos1 - center);
     nPos1 = center + dir1 * float(radius); //the first point on the arc
 
     pos3 = bp->at(numSamples-1)->sample()->position();
-    dir3 = pos3 - center;
-    dir3 = normalize(dir3);
+    dir3 = normalized(pos3 - center);
     nPos3 = center + dir3 * float(radius); //the other end point on the arc
 
     double totalAngle = acos(dir1 DOT dir3);

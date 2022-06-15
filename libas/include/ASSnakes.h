@@ -70,7 +70,7 @@ protected:
     void addEndPointsToGrid(ASContour* newC);
     void posToCellCoord(vec2 pos, float& r, float& c);
     int  posToKey(vec2 pos);
-    int  posToKey(vec2 pos, ivec2& offsets);
+    int  posToKey(vec2 pos, vec2i& offsets);
     void coverage(ASClipPathSet& pathSet);
     void minLengthCleaning();
     void merge();

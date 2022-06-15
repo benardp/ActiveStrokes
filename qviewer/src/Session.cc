@@ -9,8 +9,10 @@ See the COPYING file for details.
 
 \*****************************************************************************/
 
-#include <QScriptEngine>
 #include "Session.h"
+#include "Console.h"
+
+#include <QScriptEngine>
 #include <GQInclude.h>
 #include <QFile>
 #include <QDomDocument>
@@ -22,13 +24,14 @@ See the COPYING file for details.
 #include <QSettings>
 #include <QFileDialog>
 #include <assert.h>
-#include "Console.h"
-#include "timestamp.h"
+#include <timestamp.h>
 #include <QDebug>
 #include <QProgressDialog>
 
 #include "Stats.h"
 #include "GLViewer.h"
+
+using namespace trimesh;
 
 Console* Session::_console = 0;
 
@@ -434,7 +437,7 @@ void Session::dumpScreenshot()
     if (!_has_dumped_current_frame)
     {
         QString filename;
-        filename.sprintf(qPrintable(_screenshot_file_pattern), _current_frame);
+        filename.asprintf(qPrintable(_screenshot_file_pattern), _current_frame);
         _screenshot_filenames.push_back(filename);
         
         _viewer->saveSnapshot( filename, true );

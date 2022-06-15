@@ -283,7 +283,7 @@ ASClipPath* ASVertexContour::coherentPath() {
             map.insert(p,1);
     }
     QList<int> l = map.values();
-    qSort(l);
+    std::sort(l.begin(), l.end());
     if(l.last()>=3)
         return map.key(l.last());
     return NULL;
@@ -375,7 +375,7 @@ void ASVertexContour::decrConfidence() {
 
 void ASVertexContour::setStrength(float s) {
     if(k_useStrength)
-        _confidence = min(_confidence,float(s*k_maxConf));
+        _confidence = std::min(_confidence,float(s*k_maxConf));
 }
 
 float ASVertexContour::alpha() {

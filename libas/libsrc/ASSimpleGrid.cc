@@ -38,7 +38,7 @@ void ASSimpleGrid::init(int width, ASClipPathSet& pathSet)
     //srand ( time(NULL) );
     srand (seed);
     seed++;
-    _oGrid = ivec2((rand() % _cellSize),(rand() % _cellSize));//ivec2(0,0);//
+    _oGrid = vec2i((rand() % _cellSize),(rand() % _cellSize));//vec2i(0,0);//
 
     if(k_drawGrid){
         startDrawGrid(_oGrid,_cellSize);
@@ -109,7 +109,7 @@ void ASSimpleGrid::addSnakeToGrid(ASContour* contour)
     }
 }
 
-void ASSimpleGrid::startDrawGrid(ivec2 o_grid, int step, bool drawLines) {
+void ASSimpleGrid::startDrawGrid(vec2i o_grid, int step, bool drawLines) {
 
     glPushAttrib(GL_ENABLE_BIT);
 

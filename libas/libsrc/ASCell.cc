@@ -28,7 +28,7 @@ void ASCell::addContourVertex(ASVertexContour* v, bool checkPresence) {
     }
 }
 
-void ASCell::addContourVertices(ASContour* c, ivec2 oGrid, int cellSize, bool checkPresence) {
+void ASCell::addContourVertices(ASContour* c, vec2i oGrid, int cellSize, bool checkPresence) {
     ASContour::ContourIterator it = c->iterator();
     while(it.hasNext()){
         ASVertexContour *v = it.next();

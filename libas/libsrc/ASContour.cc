@@ -779,7 +779,7 @@ void ASContour::mergeBrushPaths() {
             float param2 = modff(bv2->param(),&intpart2);
             float lastParam=0, firstParam=0, bv1ArcLength=0, bv2ArcLength=0;
 
-            float maxIntPart = max(intpart1,intpart2);
+            float maxIntPart = std::max(intpart1,intpart2);
 
             if((param2-param1) > 0.5){
                 param1 += 1.0;

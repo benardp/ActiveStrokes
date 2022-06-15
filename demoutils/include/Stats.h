@@ -88,8 +88,8 @@ class Stats : public QAbstractItemModel
       public:
         QString     name;
         Category    category;
-        timestamp   stamp;
-        float       value;
+        trimesh::timestamp   stamp;
+        double      value;
         QString     str_value;
         int         touches_since_last_reset;
 

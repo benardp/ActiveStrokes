@@ -1168,7 +1168,7 @@ void DialsAndKnobs::notifyUpdateLayout()
 void DialsAndKnobs::updateLayout()
 {
     QList<dkValue*>& values = dkValue::values();
-    qSort(values.begin(), values.end(), valueSortedBefore);
+    std::sort(values.begin(), values.end(), valueSortedBefore);
 
     DockScrollArea* root_scroller = qobject_cast<DockScrollArea*>(this->widget());
     if (root_scroller->childLayout())
@@ -1184,7 +1184,7 @@ void DialsAndKnobs::updateLayout()
             if (dock_scroller->childLayout())
                 while ( ( item = dock_scroller->childLayout()->takeAt( 0 ) ) != NULL )
                     delete item->widget();
-                delete dock_scroller->childLayout();
+            delete dock_scroller->childLayout();
         }
 
         _layouts.clear();

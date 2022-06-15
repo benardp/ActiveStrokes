@@ -340,7 +340,7 @@ void Scene::drawScene(GQShaderRef& shader, const ModelType type)
     {
         xform normal_matrix;
         normal_matrix = inv(_modelView_matrix);
-        normal_matrix = transpose(normal_matrix);
+        normal_matrix = transp(normal_matrix);
         shader.setUniformMatrixUpper3x3("normal_matrix", normal_matrix);
     }
     if(shader.uniformLocation("model_view_matrix_inverse")>=0){
@@ -434,10 +434,10 @@ void Scene::computeGeometricFlow()
     int nvertices = _meshes[0]->trimesh->vertices.size();
     int nframes = _meshes.size();
     for (int f = 0; f < nframes; f++) {
-        std::vector<point> pf;
+        std::vector<vec3> pf;
         for (int g = 0; g < nvertices; g++) {
-            point p = _meshes[f]->trimesh->vertices[g];
-            point q = _meshes[(f+1)%nframes]->trimesh->vertices[g];
+            vec3 p = _meshes[f]->trimesh->vertices[g];
+            vec3 q = _meshes[(f+1)%nframes]->trimesh->vertices[g];
             pf.push_back(q-p);
         }
         _meshes[f]->vertex_buffer_set.add("geom_flow",pf);

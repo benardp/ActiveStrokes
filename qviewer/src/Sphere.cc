@@ -63,7 +63,7 @@ Sphere::Sphere(float radius, int nU, int nV) : _radius(radius)
 			
 			// tangent
 			tangent = vec(-normale[1], normale[0], 0);
-			tangent = normalize(tangent);
+			normalize(tangent);
 
 			// texture coordinates
 			texCoord[1] = u / float(nU);

@@ -199,7 +199,7 @@ bool GQFramebufferObject::initGL(int target, int format,
         if (status != GL_FRAMEBUFFER_COMPLETE)
         {
             QString die_msg;
-            die_msg.sprintf("Could not set up framebuffer object. Tried %dx%d, %d attachments, %d format, %d depth attachment",
+            die_msg.asprintf("Could not set up framebuffer object. Tried %dx%d, %d attachments, %d format, %d depth attachment",
                 _width, _height, _num_color_attachments, 
                 _gl_format, _attachments & GQ_ATTACH_DEPTH);
             qCritical("%s", qPrintable(die_msg));

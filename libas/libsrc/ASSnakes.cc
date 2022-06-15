@@ -138,8 +138,10 @@ void ASSnakes::updateRefImage(GQTexture2D* refImg, GQFloatImage* geomFlow, GQFlo
     _width = refImg->width();
 
     /******************* ADVECTION **********************/
-    if(k_useAdvection && useMotion)
+    if(k_useAdvection && useMotion) {
+        __TIME_CODE_BLOCK("Advection");
         advect(geomFlow,denseFlow);
+    }
 
     GQFloatImage fext(_width,_refImg->height(),4);
 
@@ -152,7 +154,7 @@ void ASSnakes::updateRefImage(GQTexture2D* refImg, GQFloatImage* geomFlow, GQFlo
 
     /*************** RELAXATION ****************/
     {
-        __TIME_CODE_BLOCK("Deform");
+        __TIME_CODE_BLOCK("Relaxation");
         // Deform the contours
         for(int i=0; i<_contourList.size(); i++){
             ASContour* c = _contourList[i];
@@ -175,7 +177,7 @@ void ASSnakes::updateRefImage(GQTexture2D* refImg, GQFloatImage* geomFlow, GQFlo
 
     if(k_enableTopology){
 
-        __TIME_CODE_BLOCK("Topology processing");
+        __TIME_CODE_BLOCK("Topology");
 
          if(k_enableCoverage || k_enableSplit || k_enableMerge)
             remove(); // because "findClosestEdgeRef" decreases the confidence
@@ -263,7 +265,7 @@ bool ASSnakes::trim()
             endPt->computeTangent();
             vec2 tangent = endPt->tangent();
 
-            ivec2 offsets;
+            vec2i offsets;
             int key = _simpleGrid.posToKey(endPt->position(),offsets);
             bool found = false;
             ASCell* cell;
@@ -315,7 +317,7 @@ bool ASSnakes::trim()
                             if(dist2(cv->position2D(),endPt->position())>_coverRadius) // not covered by this vertex
                                 continue;
 
-                            ivec2 offsetsCV;
+                            vec2i offsetsCV;
                             int keyCV = _simpleGrid.posToKey(cv->position2D(),offsetsCV);
 
                             for (int ii=0 ; ii<2 && !foundCV; ++ii) {
@@ -373,7 +375,7 @@ bool ASSnakes::trim()
 
 void ASSnakes::splitAtIndices(ASContour* c, QList<int>& splitIndices)
 {
-    qSort(splitIndices);
+    std::sort(splitIndices.begin(), splitIndices.end());
     QListIterator<int> it(splitIndices);
     it.toBack();
     while(it.hasPrevious()){
@@ -557,7 +559,7 @@ void ASSnakes::merge()
                                 normalize(tangentJoin2);
                                 float dotProd1 = (tangentJoin1 DOT tangentEndPt2);
                                 float dotProd2 = (tangentJoin2 DOT tangentEndPt);
-                                float dotProd = min(dotProd1,dotProd2);
+                                float dotProd = std::min(dotProd1,dotProd2);
                                 if(dotProd >= k_dotProdT){
                                     float coef = k_topoWeight*((1.0-dotProd)/(1.0-k_dotProdT)) + (1.0-k_topoWeight)*D/(4.0*_coverRadius);
                                     neighbors << QPair<float,ASVertexContour*>(coef,endPt2);
@@ -571,7 +573,7 @@ void ASSnakes::merge()
             if(neighbors.isEmpty())
                 continue;
 
-            qSort(neighbors);
+            std::sort(neighbors.begin(), neighbors.end());
 
             bool found = false;
             ASVertexContour* closestEndPt = 0;
@@ -579,7 +581,7 @@ void ASSnakes::merge()
             vec2 midPos, midTangent;
             float midZ, midDist;
             ASClipVertex *closestCV = 0;
-            ivec2 offsets;
+            vec2i offsets;
 
             while(!found && !neighbors.isEmpty()){
 
@@ -830,7 +832,7 @@ void ASSnakes::splitAtJunctions()
                     normalize(tangentJoin2P);
                     float dotProd1 = (tangentJoin1 DOT tangentEndPt2F);
                     float dotProd2 = (tangentJoin2F DOT tangentEndPt);
-                    float dotProd = min(dotProd1,dotProd2);
+                    float dotProd = std::min(dotProd1,dotProd2);
                     if(dotProd >= k_dotProdT){
                         float coef = k_topoWeight*((1.0-dotProd)/(1.0-k_dotProdT)) + (1.0-k_topoWeight)*D/(4.0*_coverRadius);
                         neighbors << QPair<float,ASVertexContour*>(coef,endPt2);
@@ -838,7 +840,7 @@ void ASSnakes::splitAtJunctions()
 
                     dotProd1 = (tangentJoin1 DOT tangentEndPt2P);
                     dotProd2 = (tangentJoin2P DOT tangentEndPt);
-                    dotProd = min(dotProd1,dotProd2);
+                    dotProd = std::min(dotProd1,dotProd2);
                     if(dotProd >= k_dotProdT){
                         float coef = k_topoWeight*((1.0-dotProd)/(1.0-k_dotProdT)) + (1.0-k_topoWeight)*D/(4.0*_coverRadius);
                         neighbors << QPair<float,ASVertexContour*>(coef,endPt2);
@@ -849,7 +851,7 @@ void ASSnakes::splitAtJunctions()
             if(neighbors.isEmpty())
                 continue;
 
-            qSort(neighbors);
+            std::sort(neighbors.begin(), neighbors.end());
 
             bool found = false;
             ASVertexContour* closestEndPt;
@@ -866,7 +868,7 @@ void ASSnakes::splitAtJunctions()
 
                 midPos = 0.5f*(endPt->position()+closestEndPt->position());
 
-                ivec2 offsets;
+                vec2i offsets;
                 int key = _simpleGrid.posToKey(midPos,offsets);
 
 
@@ -899,7 +901,7 @@ void ASSnakes::splitAtJunctions()
             normalize(tangentP);
             float dotProd1=(tangentJoin DOT tangentP);
             float dotProd2=(-tangentJoin DOT tangentF);
-            float dotProd = min(dotProd1,dotProd2);
+            float dotProd = std::min(dotProd1,dotProd2);
             if(dotProd >= k_dotProdT){
 
                 float coef = k_topoWeight*(1.0-dotProd/k_dotProdT);
@@ -1006,7 +1008,7 @@ void ASSnakes::addStartPoint(ASVertexContour *vertex, ASClipVertex* clipVertex, 
 
     contour->computeLength();
 
-    ivec2 offsets;
+    vec2i offsets;
     ASCell* cell = _simpleGrid[_simpleGrid.posToKey(newVertex->position(),offsets)];
     cell->addEndPoint(newVertex);
     cell->addContourVertex(newVertex);
@@ -1049,7 +1051,7 @@ void ASSnakes::addEndPoint(ASVertexContour *vertex, ASClipVertex* clipVertex, AS
 
     contour->computeLength();
 
-    ivec2 offsets;
+    vec2i offsets;
     ASCell* cell = _simpleGrid[_simpleGrid.posToKey(newVertex->position(),offsets)];
     cell->addEndPoint(newVertex);
     cell->addContourVertex(newVertex);
@@ -1131,7 +1133,7 @@ bool ASSnakes::extend() {
 
             if(!neighborsCV.empty()){
 
-                qSort(neighborsCV);
+                std::sort(neighborsCV.begin(), neighborsCV.end());
 
                 bool canExtend = false;
                 ASClipVertex *cv;
@@ -1145,7 +1147,7 @@ bool ASSnakes::extend() {
                     vec2 midTangent = (cv->position2D() - vertex->position());
                     float midDist = len2(midTangent);
 
-                    ivec2 offsets;
+                    vec2i offsets;
                     key = _simpleGrid.posToKey(midPos,offsets);
 
                     // Cross another snake?
@@ -1499,7 +1501,7 @@ void ASSnakes::coverage(ASClipPathSet& pathSet)
             if(_uncovered.isEmpty() || cv==NULL)
                 break;
 
-            ivec2 offsets;
+            vec2i offsets;
             ASCell* cell = _simpleGrid[_simpleGrid.posToKey(cv->position2D(),offsets)];
 
             ASContour* c = new ASContour(this);
@@ -1638,7 +1640,7 @@ ASClipVertex* ASSnakes::findClosestEdgeRef(vec2 pos, vec2 tangent, bool useVisib
     ASClipVertex *closestClipVertex = NULL;
     QList<QPair<float,ASClipVertex*> > neighbors;
 
-    ivec2 offsets;
+    vec2i offsets;
     int key = _simpleGrid.posToKey(pos,offsets);
 
     for (int i = 0 ; i < 2; ++i) {
@@ -1668,7 +1670,7 @@ ASClipVertex* ASSnakes::findClosestEdgeRef(vec2 pos, vec2 tangent, bool useVisib
         }
     }
     if(!neighbors.isEmpty()){
-        qSort(neighbors);
+        std::sort(neighbors.begin(), neighbors.end());
         closestClipVertex = neighbors.first().second;
     }
 

@@ -74,14 +74,14 @@ void ASDeform::buildRhs(ASContour &c, DenseMatrixType &Vin, DenseMatrixType &Fex
             restLength = v->edge()->restLength();
             vec2 dir = dPos-vPos;
             float distDV = len(dir);
-            distDV = max(distDV, k_smallest_spring);
+            distDV = std::max(distDV, k_smallest_spring);
             fspring += float(k_lenghtStiffness * (1.0 - restLength/distDV)) * dir;
         } else if(!v->isFirst()) {
             dPos = v->previous()->position();
             restLength = v->previous()->edge()->restLength();
             vec2 dir = dPos-vPos;
             float distDV = len(dir);
-            distDV = max(distDV, k_smallest_spring);
+            distDV = std::max(distDV, k_smallest_spring);
             fspring += float(k_lenghtStiffness * (1.0 - restLength/distDV)) * dir;
         }
 

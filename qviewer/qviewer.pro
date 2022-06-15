@@ -32,7 +32,12 @@ else {
 
 TRIMESH = trimesh
 
-QT += opengl xml script openglextensions
+QT += opengl xml script 
+
+equals (QT_MAJOR_VERSION, 5) {
+    QT += openglextensions
+}
+
 TARGET = qviewer
 
 PRE_TARGETDEPS += ../libgq/$${DBGNAME}/libgq.a

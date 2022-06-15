@@ -46,18 +46,24 @@ See the COPYING file for details.
 
 #include <Vec.h>
 #include <XForm.h>
+#include <Color.h>
 
 typedef int             int32;
 typedef char            int8;
 typedef unsigned int    uint32; // This could break on 64 bit, I guess.
 typedef unsigned char   uint8;
 typedef unsigned int    uint;
-typedef Vec<4,int>	    vec4i;
-typedef Vec<3,int>	    vec3i;
-typedef Vec<2,int>	    vec2i;
-typedef Vec<4,float>    vec4f;
-typedef Vec<3,float>    vec3f;
-typedef Vec<2,float>    vec2f;
+typedef trimesh::Vec<4,int>	     vec4i;
+typedef trimesh::Vec<3,int>	     vec3i;
+typedef trimesh::Vec<2,int>	     vec2i;
+typedef trimesh::Vec<4,float>    vec4f;
+typedef trimesh::Vec<3,float>    vec3f;
+typedef trimesh::Vec<2,float>    vec2f;
+typedef trimesh::Vec<3,float>    vec;
+typedef trimesh::Vec<2,float>    vec2;
+typedef trimesh::Vec<3,float>    vec3;
+typedef trimesh::Vec<4,float>    vec4;
+typedef trimesh::Color Color;
 
 #ifndef likely
 #  if !defined(__GNUC__) || (__GNUC__ == 2 && __GNUC_MINOR__ < 96)
@@ -69,14 +75,10 @@ typedef Vec<2,float>    vec2f;
 #  endif
 #endif
 
-template <class T>
-static inline XForm<T> transpose(const XForm<T> &xf)
-{
-    return XForm<T>(xf[0], xf[4], xf[8],  xf[12],
-                    xf[1], xf[5], xf[9],  xf[13],
-                    xf[2], xf[6], xf[10], xf[14],
-                    xf[3], xf[7], xf[11], xf[15]);
-}
+typedef trimesh::XForm<double>  xform;
+typedef trimesh::XForm<double> dxform;
+typedef trimesh::XForm<float>  fxform;
+
 
 inline void reportGLError()
 {

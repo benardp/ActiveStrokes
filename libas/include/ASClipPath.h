@@ -18,7 +18,6 @@ See the COPYING file for details.
 #include <QPair>
 #include <QMap>
 #include <QList>
-#include "Vec.h"
 
 #include "GQInclude.h"
 #include "GQImage.h"

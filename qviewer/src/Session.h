@@ -14,7 +14,7 @@ See the COPYING file for details.
 #ifndef SESSION_H_
 #define SESSION_H_
 
-#include "XForm.h"
+#include "GQInclude.h"
 #include "timestamp.h"
 #include "DialsAndKnobs.h"
 #include "ui_Player.h"
@@ -80,7 +80,7 @@ public:
 
     void startPlayback( QGLViewer* viewer, MainWindow *ui, DialsAndKnobs* dk,
                         PlaybackMode mode = PLAYBACK_NORMAL,
-                        const QString& filename = QString::null );
+                        const QString& filename = QString() );
     void stopPlayback();
 
     void restartPlayback();
@@ -129,7 +129,7 @@ protected:
     int			 _incr;
     bool                 _has_dumped_current_frame;
 
-    timestamp            _session_timer;
+    trimesh::timestamp            _session_timer;
 
     QString              _final_filename;
     QString              _screenshot_file_pattern;
