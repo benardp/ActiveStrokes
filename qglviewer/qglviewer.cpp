@@ -1,25 +1,3 @@
-/****************************************************************************
-
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
-
- This file is part of the QGLViewer library version 2.7.1.
-
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- versions 2.0 or 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
- In addition, as a special exception, Gilles Debunne gives you certain 
- additional rights, described in the file GPL_EXCEPTION in this package.
-
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-*****************************************************************************/
-
 #include "qglviewer.h"
 #include "camera.h"
 #include "domUtils.h"
@@ -30,7 +8,9 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QGLContext>
+#endif
 #include <QImage>
 #include <QMessageBox>
 #include <QMouseEvent>
@@ -41,6 +21,11 @@
 #include <QTimer>
 #include <QUrl>
 #include <QtAlgorithms>
+#include <QPainter>
+
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+#define MidButton MiddleButton
+#endif
 
 using namespace std;
 using namespace qglviewer;
@@ -75,7 +60,7 @@ void QGLViewer::defaultConstructor() {
   // qWarning("Unable to get OpenGL version, context may not be available -
   // Check your configuration");
 
-  int poolIndex = QGLViewer::QGLViewerPool_.indexOf(NULL);
+  int poolIndex = QGLViewer::QGLViewerPool_.indexOf(nullptr);
   setFocusPolicy(Qt::StrongFocus);
 
   if (poolIndex >= 0)
@@ -105,15 +90,15 @@ void QGLViewer::defaultConstructor() {
   // setFullScreen(true)
 
   // #CONNECTION# default values in initFromDOMElement()
-  manipulatedFrame_ = NULL;
+  manipulatedFrame_ = nullptr;
   manipulatedFrameIsACamera_ = false;
   mouseGrabberIsAManipulatedFrame_ = false;
   mouseGrabberIsAManipulatedCameraFrame_ = false;
   displayMessage_ = false;
   connect(&messageTimer_, SIGNAL(timeout()), SLOT(hideMessage()));
   messageTimer_.setSingleShot(true);
-  helpWidget_ = NULL;
-  setMouseGrabber(NULL);
+  helpWidget_ = nullptr;
+  setMouseGrabber(nullptr);
 
   setSceneRadius(1.0);
   showEntireScene();
@@ -134,7 +119,7 @@ void QGLViewer::defaultConstructor() {
   stopAnimation();
   setAnimationPeriod(40); // 25Hz
 
-  selectBuffer_ = NULL;
+  selectBuffer_ = nullptr;
   setSelectBufferSize(4 * 1000);
   setSelectRegionWidth(3);
   setSelectRegionHeight(3);
@@ -151,7 +136,7 @@ void QGLViewer::defaultConstructor() {
 
   setAttribute(Qt::WA_NoSystemBackground);
 
-  tileRegion_ = NULL;
+  tileRegion_ = nullptr;
 }
 
 /*! Constructor. See \c QGLWidget documentation for details.
@@ -164,6 +149,9 @@ QGLViewer::QGLViewer(QWidget *parent, Qt::WindowFlags flags)
 }
 
 #ifndef DOXYGEN
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+
 /*! These contructors are deprecated since version 2.7.0, since they are not
  * supported by QOpenGlWidget */
 
@@ -177,7 +165,7 @@ will share the OpenGL context with \p shareWidget (see isSharing()). */
 QGLViewer::QGLViewer(QWidget *parent, const QGLWidget *shareWidget,
                      Qt::WindowFlags flags)
     : QOpenGLWidget(parent, flags) {
-  Q_UNUSED(shareWidget);
+  Q_UNUSED(shareWidget)
   qWarning("The constructor with a shareWidget is deprecated, use the regular "
            "contructor instead.");
   defaultConstructor();
@@ -189,8 +177,8 @@ otherwise). */
 QGLViewer::QGLViewer(QGLContext *context, QWidget *parent,
                      const QGLWidget *shareWidget, Qt::WindowFlags flags)
     : QOpenGLWidget(parent, flags) {
-  Q_UNUSED(context);
-  Q_UNUSED(shareWidget);
+  Q_UNUSED(context)
+  Q_UNUSED(shareWidget)
   qWarning("The constructor with a QGLContext is deprecated, use the regular "
            "contructor instead.");
   defaultConstructor();
@@ -204,17 +192,18 @@ example</a>). */
 QGLViewer::QGLViewer(const QGLFormat &format, QWidget *parent,
                      const QGLWidget *shareWidget, Qt::WindowFlags flags)
     : QOpenGLWidget(parent, flags) {
-  Q_UNUSED(format);
-  Q_UNUSED(shareWidget);
+  Q_UNUSED(format)
+  Q_UNUSED(shareWidget)
   qWarning("The constructor with a QGLFormat is deprecated, use the regular "
            "contructor instead.");
   defaultConstructor();
 }
+#endif // QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #endif // DOXYGEN
 
 /*! Virtual destructor.
 
-The viewer is replaced by \c NULL in the QGLViewerPool() (in order to preserve
+The viewer is replaced by \c nullptr in the QGLViewerPool() (in order to preserve
 other viewer's indexes) and allocated memory is released. The camera() is
 deleted and should be copied before if it is shared by an other viewer. */
 QGLViewer::~QGLViewer() {
@@ -224,7 +213,7 @@ QGLViewer::~QGLViewer() {
   // saveStateToFileForAllViewers();
 
   QGLViewer::QGLViewerPool_.replace(QGLViewer::QGLViewerPool_.indexOf(this),
-                                    NULL);
+                                    nullptr);
 
   delete camera();
   delete[] selectBuffer_;
@@ -590,7 +579,7 @@ void QGLViewer::setDefaultMouseBindings() {
 
   //#CONNECTION# toggleCameraMode()
   for (int handler = 0; handler < 2; ++handler) {
-    MouseHandler mh = (MouseHandler)(handler);
+    MouseHandler mh = static_cast<MouseHandler>(handler);
     Qt::KeyboardModifiers modifiers =
         (mh == FRAME) ? frameKeyboardModifiers : cameraKeyboardModifiers;
 
@@ -650,7 +639,7 @@ It you simply want to save and restore Camera positions, use
 qglviewer::Camera::addKeyFrameToPath() and qglviewer::Camera::playPath()
 instead.
 
-This method silently ignores \c NULL \p camera pointers. The calling method is
+This method silently ignores \c nullptr \p camera pointers. The calling method is
 responsible for deleting the previous camera pointer in order to prevent memory
 leaks if needed.
 
@@ -743,23 +732,23 @@ void QGLViewer::drawLight(GLenum light, qreal scale) const {
     float pos[4];
     glGetLightfv(light, GL_POSITION, pos);
 
-    if (pos[3] != 0.0) {
+    if (static_cast<double>(pos[3]) != 0.0) {
       glTranslatef(pos[0] / pos[3], pos[1] / pos[3], pos[2] / pos[3]);
 
       GLfloat cutOff;
       glGetLightfv(light, GL_SPOT_CUTOFF, &cutOff);
-      if (cutOff != 180.0) {
+      if (static_cast<double>(cutOff) != 180.0) {
         GLfloat dir[4];
         glGetLightfv(light, GL_SPOT_DIRECTION, dir);
         glMultMatrixd(Quaternion(Vec(0, 0, 1), Vec(dir)).matrix());
         QGLViewer::drawArrow(length);
-        gluCylinder(quadric, 0.0, 0.7 * length * sin(cutOff * M_PI / 180.0),
-                    0.7 * length * cos(cutOff * M_PI / 180.0), 12, 1);
+        gluCylinder(quadric, 0.0, 0.7 * length * sin(static_cast<double>(cutOff) * M_PI / 180.0),
+                    0.7 * length * cos(static_cast<double>(cutOff) * M_PI / 180.0), 12, 1);
       } else
         gluSphere(quadric, 0.2 * length, 10, 10);
     } else {
       // Directional light.
-      Vec dir(pos[0], pos[1], pos[2]);
+      Vec dir(static_cast<double>(pos[0]), static_cast<double>(pos[1]), static_cast<double>(pos[2]));
       dir.normalize();
       Frame fr =
           Frame(camera()->cameraCoordinatesOf(
@@ -832,7 +821,7 @@ void QGLViewer::drawText(int x, int y, const QString &text, const QFont &fnt) {
   if (!textIsEnabled())
     return;
 
-  if (tileRegion_ != NULL) {
+  if (tileRegion_ != nullptr) {
     renderText(int((x - tileRegion_->xMin) * width() /
                    (tileRegion_->xMax - tileRegion_->xMin)),
                int((y - tileRegion_->yMin) * height() /
@@ -928,7 +917,7 @@ void QGLViewer::startScreenCoordinatesSystem(bool upward) const {
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  if (tileRegion_ != NULL)
+  if (tileRegion_ != nullptr)
     if (upward)
       glOrtho(tileRegion_->xMin, tileRegion_->xMax, tileRegion_->yMin,
               tileRegion_->yMax, 0.0, -1.0);
@@ -1182,7 +1171,7 @@ setSelectedName((selectBuffer())[i*4+3])
 See the <a href="../examples/multiSelect.html">multiSelect example</a> for
 a multi-object selection implementation of this method. */
 void QGLViewer::endSelection(const QPoint &point) {
-  Q_UNUSED(point);
+  Q_UNUSED(point)
 
   // Flush GL buffers
   glFlush();
@@ -1316,7 +1305,7 @@ void QGLViewer::mousePressEvent(QMouseEvent *e) {
   //#CONNECTION# mouseString() concatenates bindings description in inverse
   // order.
   ClickBindingPrivate cbp(e->modifiers(), e->button(), false,
-                          (Qt::MouseButtons)(e->buttons() & ~(e->button())),
+                          static_cast<Qt::MouseButtons>((e->buttons() & ~(e->button()))),
                           currentlyPressedKey_);
 
   if (clickBinding_.contains(cbp)) {
@@ -1418,7 +1407,7 @@ void QGLViewer::mouseMoveEvent(QMouseEvent *e) {
       else
         mouseGrabber()->mouseMoveEvent(e, camera());
     else
-      setMouseGrabber(NULL);
+      setMouseGrabber(nullptr);
     update();
   }
 
@@ -1468,7 +1457,7 @@ void QGLViewer::mouseReleaseEvent(QMouseEvent *e) {
       mouseGrabber()->mouseReleaseEvent(e, camera());
     mouseGrabber()->checkIfGrabsMouse(e->x(), e->y(), camera());
     if (!(mouseGrabber()->grabsMouse()))
-      setMouseGrabber(NULL);
+      setMouseGrabber(nullptr);
     // update();
   } else
       //#CONNECTION# mouseMoveEvent has the same structure
@@ -1550,7 +1539,7 @@ setMouseBinding() and the <a href="../mouse.html">mouse page</a>. */
 void QGLViewer::mouseDoubleClickEvent(QMouseEvent *e) {
   //#CONNECTION# mousePressEvent has the same structure
   ClickBindingPrivate cbp(e->modifiers(), e->button(), true,
-                          (Qt::MouseButtons)(e->buttons() & ~(e->button())),
+                          static_cast<Qt::MouseButtons>(e->buttons() & ~(e->button())),
                           currentlyPressedKey_);
   if (clickBinding_.contains(cbp))
     performClickAction(clickBinding_[cbp], e);
@@ -1622,9 +1611,9 @@ void QGLViewer::setMouseGrabber(MouseGrabber *mouseGrabber) {
   mouseGrabber_ = mouseGrabber;
 
   mouseGrabberIsAManipulatedFrame_ =
-      (dynamic_cast<ManipulatedFrame *>(mouseGrabber) != NULL);
+      (dynamic_cast<ManipulatedFrame *>(mouseGrabber) != nullptr);
   mouseGrabberIsAManipulatedCameraFrame_ =
-      ((dynamic_cast<ManipulatedCameraFrame *>(mouseGrabber) != NULL) &&
+      ((dynamic_cast<ManipulatedCameraFrame *>(mouseGrabber) != nullptr) &&
        (mouseGrabber != camera()->frame()));
   Q_EMIT mouseGrabberChanged(mouseGrabber);
 }
@@ -1641,7 +1630,7 @@ void QGLViewer::setMouseGrabberIsEnabled(
 QString QGLViewer::mouseActionString(QGLViewer::MouseAction ma) {
   switch (ma) {
   case QGLViewer::NO_MOUSE_ACTION:
-    return QString::null;
+    return QString();
   case QGLViewer::ROTATE:
     return QGLViewer::tr("Rotates", "ROTATE mouse action");
   case QGLViewer::ZOOM:
@@ -1667,13 +1656,13 @@ QString QGLViewer::mouseActionString(QGLViewer::MouseAction ma) {
   case QGLViewer::ZOOM_ON_REGION:
     return QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
   }
-  return QString::null;
+  return QString();
 }
 
 QString QGLViewer::clickActionString(QGLViewer::ClickAction ca) {
   switch (ca) {
   case QGLViewer::NO_CLICK_ACTION:
-    return QString::null;
+    return QString();
   case QGLViewer::ZOOM_ON_PIXEL:
     return QGLViewer::tr("Zooms on pixel", "ZOOM_ON_PIXEL click action");
   case QGLViewer::ZOOM_TO_FIT:
@@ -1698,7 +1687,7 @@ QString QGLViewer::clickActionString(QGLViewer::ClickAction ca) {
   case QGLViewer::ALIGN_CAMERA:
     return QGLViewer::tr("Aligns camera", "ALIGN_CAMERA click action");
   }
-  return QString::null;
+  return QString();
 }
 
 static QString keyString(unsigned int key) {
@@ -1990,7 +1979,7 @@ void QGLViewer::setKeyDescription(unsigned int key, QString description) {
 
 QString QGLViewer::cameraPathKeysString() const {
   if (pathIndex_.isEmpty())
-    return QString::null;
+    return QString();
 
   QVector<Qt::Key> keys;
   keys.reserve(pathIndex_.count());
@@ -1998,7 +1987,7 @@ QString QGLViewer::cameraPathKeysString() const {
                                                   endi = pathIndex_.end();
        i != endi; ++i)
     keys.push_back(i.key());
-  qSort(keys);
+  std::sort(keys.begin(), keys.end());
 
   QVector<Qt::Key>::const_iterator it = keys.begin(), end = keys.end();
   QString res = keyString(*it);
@@ -2166,13 +2155,13 @@ void QGLViewer::help() {
                             tr("&About", "Help window about title")};
 
   if (!helpWidget()) {
-    // Qt4 requires a NULL parent...
-    helpWidget_ = new QTabWidget(NULL);
+    // Qt4 requires a nullptr parent...
+    helpWidget_ = new QTabWidget(nullptr);
     helpWidget()->setWindowTitle(tr("Help", "Help window title"));
 
     resize = true;
     for (int i = 0; i < 4; ++i) {
-      QTextEdit *tab = new QTextEdit(NULL);
+      QTextEdit *tab = new QTextEdit(nullptr);
       tab->setReadOnly(true);
 
       helpWidget()->insertTab(i, tab, label[i]);
@@ -2214,7 +2203,7 @@ void QGLViewer::help() {
       break;
     }
 
-    QTextEdit *textEdit = (QTextEdit *)(helpWidget()->widget(i));
+    QTextEdit *textEdit = static_cast<QTextEdit *>(helpWidget()->widget(i));
     textEdit->setHtml(text);
     textEdit->setText(text);
 
@@ -2279,7 +2268,7 @@ void QGLViewer::keyPressEvent(QKeyEvent *e) {
     unsigned int index = pathIndex_[Qt::Key(key)];
 
     // not safe, but try to double press on two viewers at the same time !
-    static QTime doublePress;
+    static QElapsedTimer doublePress;
 
     if (modifiers == playPathKeyboardModifiers()) {
       int elapsed = doublePress.restart();
@@ -2311,7 +2300,7 @@ void QGLViewer::keyPressEvent(QKeyEvent *e) {
           camera()->deletePath(index);
         }
       } else {
-        bool nullBefore = (camera()->keyFrameInterpolator(index) == NULL);
+        bool nullBefore = (camera()->keyFrameInterpolator(index) == nullptr);
         camera()->addKeyFrameToPath(index);
         if (nullBefore)
           connect(camera()->keyFrameInterpolator(index), SIGNAL(interpolated()),
@@ -3075,7 +3064,7 @@ int QGLViewer::mouseButtonState(MouseHandler handler, MouseAction action,
        it != end; ++it)
     if ((it.value().handler == handler) && (it.value().action == action) &&
         (it.value().withConstraint == withConstraint))
-      return (int)it.key().modifiers | (int)it.key().button;
+      return static_cast<int>(it.key().modifiers) | static_cast<int>(it.key().button);
 
   return Qt::NoButton;
 }
@@ -3398,7 +3387,7 @@ void QGLViewer::setManipulatedFrame(ManipulatedFrame *frame) {
 
   manipulatedFrameIsACamera_ =
       ((manipulatedFrame() != camera()->frame()) &&
-       (dynamic_cast<ManipulatedCameraFrame *>(manipulatedFrame()) != NULL));
+       (dynamic_cast<ManipulatedCameraFrame *>(manipulatedFrame()) != nullptr));
 
   if (manipulatedFrame()) {
     // Prevent multiple connections, that would result in useless display
@@ -3453,7 +3442,7 @@ void QGLViewer::drawVisualHints() {
   // drawText(80, 10, "Play");
 
   // Screen rotate line
-  ManipulatedFrame *mf = NULL;
+  ManipulatedFrame *mf = nullptr;
   Vec pnt;
   if (camera()->frame()->action_ == SCREEN_ROTATE) {
     mf = camera()->frame();
@@ -4160,7 +4149,7 @@ void QGLViewer::copyBufferToTexture(GLint internalFormat, GLenum format) {
       format = GLenum(internalFormat);
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, bufferTextureWidth_,
-                 bufferTextureHeight_, 0, format, GL_UNSIGNED_BYTE, NULL);
+                 bufferTextureHeight_, 0, format, GL_UNSIGNED_BYTE, nullptr);
   }
 
   glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width(), height());

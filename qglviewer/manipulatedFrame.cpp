@@ -1,25 +1,3 @@
-/****************************************************************************
-
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
-
- This file is part of the QGLViewer library version 2.7.1.
-
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- versions 2.0 or 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
- In addition, as a special exception, Gilles Debunne gives you certain 
- additional rights, described in the file GPL_EXCEPTION in this package.
-
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-*****************************************************************************/
-
 #include "manipulatedFrame.h"
 #include "camera.h"
 #include "domUtils.h"
@@ -51,7 +29,7 @@ ManipulatedFrame::ManipulatedFrame()
   setZoomSensitivity(1.0);
 
   isSpinning_ = false;
-  previousConstraint_ = NULL;
+  previousConstraint_ = nullptr;
 
   connect(&spinningTimer_, SIGNAL(timeout()), SLOT(spinUpdate()));
 }
@@ -140,7 +118,7 @@ restored and are left unchanged.
 
 See Vec::initFromDOMElement() for a complete code example. */
 void ManipulatedFrame::initFromDOMElement(const QDomElement &element) {
-  // Not called since it would set constraint() and referenceFrame() to NULL.
+  // Not called since it would set constraint() and referenceFrame() to nullptr.
   // *this = ManipulatedFrame();
   Frame::initFromDOMElement(element);
 
@@ -205,16 +183,16 @@ void ManipulatedFrame::spinUpdate() {
 #ifndef DOXYGEN
 /*! Protected internal method used to handle mouse events. */
 void ManipulatedFrame::startAction(int ma, bool withConstraint) {
-  action_ = (QGLViewer::MouseAction)(ma);
+  action_ = static_cast<QGLViewer::MouseAction>(ma);
 
   // #CONNECTION# manipulatedFrame::wheelEvent,
   // manipulatedCameraFrame::wheelEvent and mouseReleaseEvent() restore previous
   // constraint
   if (withConstraint)
-    previousConstraint_ = NULL;
+    previousConstraint_ = nullptr;
   else {
     previousConstraint_ = constraint();
-    setConstraint(NULL);
+    setConstraint(nullptr);
   }
 
   switch (action_) {
@@ -280,7 +258,11 @@ qreal ManipulatedFrame::deltaWithPrevPos(QMouseEvent *const event,
 
 qreal ManipulatedFrame::wheelDelta(const QWheelEvent *event) const {
   static const qreal WHEEL_SENSITIVITY_COEF = 8E-4;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   return event->delta() * wheelSensitivity() * WHEEL_SENSITIVITY_COEF;
+#else
+  return event->angleDelta().y() * wheelSensitivity() * WHEEL_SENSITIVITY_COEF;
+#endif
 }
 
 void ManipulatedFrame::zoom(qreal delta, const Camera *const camera) {
@@ -303,7 +285,7 @@ The mouse behavior depends on which button is pressed. See the <a
 href="../mouse.html">QGLViewer mouse page</a> for details. */
 void ManipulatedFrame::mousePressEvent(QMouseEvent *const event,
                                        Camera *const camera) {
-  Q_UNUSED(camera);
+  Q_UNUSED(camera)
 
   if (grabsMouse())
     keepsGrabbingMouse_ = true;
@@ -462,8 +444,8 @@ spinningSensitivity() when the button is released. Press the rotate button again
 to stop spinning. See startSpinning() and isSpinning(). */
 void ManipulatedFrame::mouseReleaseEvent(QMouseEvent *const event,
                                          Camera *const camera) {
-  Q_UNUSED(event);
-  Q_UNUSED(camera);
+  Q_UNUSED(event)
+  Q_UNUSED(camera)
 
   keepsGrabbingMouse_ = false;
 

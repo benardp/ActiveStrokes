@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ImageInterface.ui'
 **
-** Created by: Qt User Interface Compiler version 5.12.2
+** Created by: Qt User Interface Compiler version 6.2.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -193,44 +193,44 @@ public:
 
 
         retranslateUi(ImageInterface);
-        QObject::connect(okButton, SIGNAL(clicked()), ImageInterface, SLOT(accept()));
-        QObject::connect(cancelButton, SIGNAL(clicked()), ImageInterface, SLOT(reject()));
+        QObject::connect(okButton, &QPushButton::clicked, ImageInterface, qOverload<>(&QDialog::accept));
+        QObject::connect(cancelButton, &QPushButton::clicked, ImageInterface, qOverload<>(&QDialog::reject));
 
         QMetaObject::connectSlotsByName(ImageInterface);
     } // setupUi
 
     void retranslateUi(QDialog *ImageInterface)
     {
-        ImageInterface->setWindowTitle(QApplication::translate("ImageInterface", "Image settings", nullptr));
-        label_2->setText(QApplication::translate("ImageInterface", "Width", nullptr));
-#ifndef QT_NO_TOOLTIP
-        imgWidth->setToolTip(QApplication::translate("ImageInterface", "Width of the image (in pixels)", nullptr));
-#endif // QT_NO_TOOLTIP
-        imgWidth->setSuffix(QApplication::translate("ImageInterface", " px", nullptr));
-        label_3->setText(QApplication::translate("ImageInterface", "Height", nullptr));
-#ifndef QT_NO_TOOLTIP
-        imgHeight->setToolTip(QApplication::translate("ImageInterface", "Height of the image (in pixels)", nullptr));
-#endif // QT_NO_TOOLTIP
-        imgHeight->setSuffix(QApplication::translate("ImageInterface", " px", nullptr));
-        label_4->setText(QApplication::translate("ImageInterface", "Image quality", nullptr));
-#ifndef QT_NO_TOOLTIP
-        imgQuality->setToolTip(QApplication::translate("ImageInterface", "Between 0 (smallest files) and 100 (highest quality)", nullptr));
-#endif // QT_NO_TOOLTIP
-        label->setText(QApplication::translate("ImageInterface", "Oversampling", nullptr));
-#ifndef QT_NO_TOOLTIP
-        oversampling->setToolTip(QApplication::translate("ImageInterface", "Antialiases image (when larger then 1.0)", nullptr));
-#endif // QT_NO_TOOLTIP
-        oversampling->setPrefix(QApplication::translate("ImageInterface", "x ", nullptr));
-#ifndef QT_NO_TOOLTIP
-        whiteBackground->setToolTip(QApplication::translate("ImageInterface", "Use white as background color", nullptr));
-#endif // QT_NO_TOOLTIP
-        whiteBackground->setText(QApplication::translate("ImageInterface", "Use white background", nullptr));
-#ifndef QT_NO_TOOLTIP
-        expandFrustum->setToolTip(QApplication::translate("ImageInterface", "When image aspect ratio differs from viewer's one, expand frustum as needed. Fits inside current frustum otherwise.", nullptr));
-#endif // QT_NO_TOOLTIP
-        expandFrustum->setText(QApplication::translate("ImageInterface", "Expand frustum if needed", nullptr));
-        okButton->setText(QApplication::translate("ImageInterface", "OK", nullptr));
-        cancelButton->setText(QApplication::translate("ImageInterface", "Cancel", nullptr));
+        ImageInterface->setWindowTitle(QCoreApplication::translate("ImageInterface", "Image settings", nullptr));
+        label_2->setText(QCoreApplication::translate("ImageInterface", "Width", nullptr));
+#if QT_CONFIG(tooltip)
+        imgWidth->setToolTip(QCoreApplication::translate("ImageInterface", "Width of the image (in pixels)", nullptr));
+#endif // QT_CONFIG(tooltip)
+        imgWidth->setSuffix(QCoreApplication::translate("ImageInterface", " px", nullptr));
+        label_3->setText(QCoreApplication::translate("ImageInterface", "Height", nullptr));
+#if QT_CONFIG(tooltip)
+        imgHeight->setToolTip(QCoreApplication::translate("ImageInterface", "Height of the image (in pixels)", nullptr));
+#endif // QT_CONFIG(tooltip)
+        imgHeight->setSuffix(QCoreApplication::translate("ImageInterface", " px", nullptr));
+        label_4->setText(QCoreApplication::translate("ImageInterface", "Image quality", nullptr));
+#if QT_CONFIG(tooltip)
+        imgQuality->setToolTip(QCoreApplication::translate("ImageInterface", "Between 0 (smallest files) and 100 (highest quality)", nullptr));
+#endif // QT_CONFIG(tooltip)
+        label->setText(QCoreApplication::translate("ImageInterface", "Oversampling", nullptr));
+#if QT_CONFIG(tooltip)
+        oversampling->setToolTip(QCoreApplication::translate("ImageInterface", "Antialiases image (when larger then 1.0)", nullptr));
+#endif // QT_CONFIG(tooltip)
+        oversampling->setPrefix(QCoreApplication::translate("ImageInterface", "x ", nullptr));
+#if QT_CONFIG(tooltip)
+        whiteBackground->setToolTip(QCoreApplication::translate("ImageInterface", "Use white as background color", nullptr));
+#endif // QT_CONFIG(tooltip)
+        whiteBackground->setText(QCoreApplication::translate("ImageInterface", "Use white background", nullptr));
+#if QT_CONFIG(tooltip)
+        expandFrustum->setToolTip(QCoreApplication::translate("ImageInterface", "When image aspect ratio differs from viewer's one, expand frustum as needed. Fits inside current frustum otherwise.", nullptr));
+#endif // QT_CONFIG(tooltip)
+        expandFrustum->setText(QCoreApplication::translate("ImageInterface", "Expand frustum if needed", nullptr));
+        okButton->setText(QCoreApplication::translate("ImageInterface", "OK", nullptr));
+        cancelButton->setText(QCoreApplication::translate("ImageInterface", "Cancel", nullptr));
     } // retranslateUi
 
 };

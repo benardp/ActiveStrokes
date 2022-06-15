@@ -1,25 +1,3 @@
-/****************************************************************************
-
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
-
- This file is part of the QGLViewer library version 2.7.1.
-
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- versions 2.0 or 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
- In addition, as a special exception, Gilles Debunne gives you certain 
- additional rights, described in the file GPL_EXCEPTION in this package.
-
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-*****************************************************************************/
-
 #ifndef QGLVIEWER_QUATERNION_H
 #define QGLVIEWER_QUATERNION_H
 
@@ -42,14 +20,12 @@ namespace qglviewer {
    Frame::coordinatesOf() and Frame::transformOf().
 
         You can apply the Quaternion \c q rotation to the OpenGL matrices using:
-        \code
-        glMultMatrixd(q.matrix());
-        // equvalent to glRotate(q.angle()*180.0/M_PI, q.axis().x, q.axis().y,
-   q.axis().z); \endcode
+        \code glMultMatrixd(q.matrix()); 
+        // equivalent to glRotate(q.angle()*180.0/M_PI, q.axis().x, q.axis().y, q.axis().z); \endcode
 
         Quaternion is part of the \c qglviewer namespace, specify \c
-   qglviewer::Quaternion or use the qglviewer namespace: \code using namespace
-   qglviewer; \endcode
+   qglviewer::Quaternion or use the qglviewer namespace: 
+  \code using namespace qglviewer; \endcode
 
         <h3>Internal representation</h3>
 

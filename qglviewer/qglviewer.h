@@ -1,34 +1,14 @@
-/****************************************************************************
-
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
-
- This file is part of the QGLViewer library version 2.7.1.
-
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- versions 2.0 or 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
- In addition, as a special exception, Gilles Debunne gives you certain 
- additional rights, described in the file GPL_EXCEPTION in this package.
-
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-*****************************************************************************/
-
 #ifndef QGLVIEWER_QGLVIEWER_H
 #define QGLVIEWER_QGLVIEWER_H
 
 #include "camera.h"
 
 #include <QClipboard>
-#include <QGL>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#  include <QGL>
+#endif
 #include <QMap>
-#include <QTime>
+#include <QElapsedTimer>
 
 class QTabWidget;
 
@@ -71,6 +51,7 @@ class QGLVIEWER_EXPORT QGLViewer : public QOpenGLWidget {
 public:
   explicit QGLViewer(QWidget *parent = 0,
                      Qt::WindowFlags flags = Qt::WindowFlags());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   explicit QGLViewer(QWidget *parent, const QGLWidget *shareWidget,
                      Qt::WindowFlags flags = 0);
   explicit QGLViewer(QGLContext *context, QWidget *parent = 0,
@@ -79,7 +60,7 @@ public:
   explicit QGLViewer(const QGLFormat &format, QWidget *parent = 0,
                      const QGLWidget *shareWidget = 0,
                      Qt::WindowFlags flags = 0);
-
+#endif
   virtual ~QGLViewer();
 
   /*! @name Display of visual hints */
@@ -279,7 +260,7 @@ public Q_SLOTS:
   /*! @name Associated objects */
   //@{
 public:
-  /*! Returns the associated qglviewer::Camera, never \c NULL. */
+  /*! Returns the associated qglviewer::Camera, never \c nullptr. */
   qglviewer::Camera *camera() const { return camera_; }
 
   /*! Returns the viewer's qglviewer::ManipulatedFrame.
@@ -291,7 +272,7 @@ public:
   See the <a href="../examples/manipulatedFrame.html">manipulatedFrame
   example</a> for a complete implementation.
 
-  Default value is \c NULL, meaning that no qglviewer::ManipulatedFrame is set.
+  Default value is \c nullptr, meaning that no qglviewer::ManipulatedFrame is set.
 */
   qglviewer::ManipulatedFrame *manipulatedFrame() const {
     return manipulatedFrame_;
@@ -305,7 +286,7 @@ public Q_SLOTS:
   /*! @name Mouse grabbers */
   //@{
 public:
-  /*! Returns the current qglviewer::MouseGrabber, or \c NULL if no
+  /*! Returns the current qglviewer::MouseGrabber, or \c nullptr if no
   qglviewer::MouseGrabber currently grabs mouse events.
 
   When qglviewer::MouseGrabber::grabsMouse(), the different mouse events are
@@ -593,7 +574,7 @@ public:
   Note that this method is not needed if you use drawText() which already calls
   it internally. */
   QFont scaledFont(const QFont &font) const {
-    if (tileRegion_ == NULL)
+    if (tileRegion_ == nullptr)
       return font;
     else {
       QFont f(font);
@@ -759,7 +740,7 @@ Q_SIGNALS:
   /*! Signal emitted by setMouseGrabber() when the mouseGrabber() is changed.
 
   \p mouseGrabber is a pointer to the new MouseGrabber. Note that this signal is
-  emitted with a \c NULL parameter each time a MouseGrabber stops grabbing
+  emitted with a \c nullptr parameter each time a MouseGrabber stops grabbing
   mouse. */
   void mouseGrabberChanged(qglviewer::MouseGrabber *mouseGrabber);
 
@@ -824,7 +805,7 @@ protected:
   Note that initializeGL() modifies the standard OpenGL context. These values
   can be restored back in this method.
 
-  \attention You should not call update() (or any method that calls it) in
+  \attention You should not call updateGL() (or any method that calls it) in
   this method, as it will result in an infinite loop. The different QGLViewer
   set methods (setAxisIsDrawn(), setFPSIsDisplayed()...) are protected against
   this problem and can safely be called.
@@ -1220,8 +1201,8 @@ public Q_SLOTS:
   void setStateFileName(const QString &name) { stateFileName_ = name; }
 
 #ifndef DOXYGEN
-  void saveToFile(const QString &fileName = QString::null);
-  bool restoreFromFile(const QString &fileName = QString::null);
+  void saveToFile(const QString &fileName = QString());
+  bool restoreFromFile(const QString &fileName = QString());
 #endif
 
 private:
@@ -1232,7 +1213,7 @@ private:
   //@{
 public:
   /*! Returns a \c QList that contains pointers to all the created QGLViewers.
-    Note that this list may contain \c NULL pointers if the associated viewer
+    Note that this list may contain \c nullptr pointers if the associated viewer
   has been deleted.
 
   Can be useful to apply a method or to connect a signal to all the viewers:
@@ -1251,7 +1232,7 @@ public:
   index in unique and can be used to identify the different created QGLViewers
   (see stateFileName() for an application example).
 
-  When a QGLViewer is deleted, the QGLViewers' indexes are preserved and NULL is
+  When a QGLViewer is deleted, the QGLViewers' indexes are preserved and nullptr is
   set for that index. When a QGLViewer is created, it is placed in the first
   available position in that list. Returns -1 if the QGLViewer could not be
   found (which should not be possible). */
@@ -1316,7 +1297,7 @@ private:
   int animationTimerId_;
 
   // F P S    d i s p l a y
-  QTime fpsTime_;
+  QElapsedTimer fpsTime_;
   unsigned int fpsCounter_;
   QString fpsString_;
   qreal f_p_s_;
@@ -1430,7 +1411,7 @@ private:
         return modifiers < cbp.modifiers;
       if (button != cbp.button)
         return button < cbp.button;
-      return doubleClick != cbp.doubleClick;
+      return doubleClick < cbp.doubleClick;
     }
   };
 #endif

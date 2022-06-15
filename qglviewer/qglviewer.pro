@@ -1,6 +1,8 @@
 DEFINES += NO_VECTORIAL_RENDER
 DEFINES += QGLVIEWER_STATIC
 
+CONFIG *= qt opengl warn_on shared thread create_prl rtti no_keywords
+
 CONFIG += debug_and_release
 
 CONFIG(release, debug|release) {
@@ -27,6 +29,16 @@ else {
 }
 
 CONFIG += staticlib
+
+equals (QT_MAJOR_VERSION, 5) {
+	QT *= gui widgets
+}
+equals (QT_MAJOR_VERSION, 6) {
+	QT *= gui widgets openglwidgets
+}
+
+TRANSLATIONS = qglviewer_fr.ts
+
 QT += opengl xml
 
 TARGET = qglviewer
@@ -37,4 +49,4 @@ INCLUDEPATH += .
 #Input
 HEADERS += *.h
 SOURCES += *.cpp
-FORMS += *.ui
+FORMS *= ImageInterface.ui

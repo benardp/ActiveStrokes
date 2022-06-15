@@ -1,25 +1,3 @@
-/****************************************************************************
-
- Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
-
- This file is part of the QGLViewer library version 2.7.1.
-
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- versions 2.0 or 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
- In addition, as a special exception, Gilles Debunne gives you certain 
- additional rights, described in the file GPL_EXCEPTION in this package.
-
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-*****************************************************************************/
-
 #include "qglviewer.h"
 
 #ifndef NO_VECTORIAL_RENDER
@@ -73,7 +51,11 @@ Then calls setSnapshotFormat() with the selected one (unless the user cancels).
 Returns \c false if the user presses the Cancel button and \c true otherwise. */
 bool QGLViewer::openSnapshotFormatDialog() {
   bool ok = false;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   QStringList list = formats.split(";;", QString::SkipEmptyParts);
+#else
+  QStringList list = formats.split(";;", Qt::SkipEmptyParts);
+#endif
   int current = list.indexOf(FDFormatString[snapshotFormat()]);
   QString format =
       QInputDialog::getItem(this, "Snapshot format", "Select a snapshot format",
@@ -205,13 +187,13 @@ private:
   static QProgressDialog *progressDialog;
 };
 
-QProgressDialog *ProgressDialog::progressDialog = NULL;
+QProgressDialog *ProgressDialog::progressDialog = nullptr;
 
 void ProgressDialog::showProgressDialog(QOpenGLWidget *parent) {
   progressDialog = new QProgressDialog(parent);
   progressDialog->setWindowTitle("Image rendering progress");
   progressDialog->setMinimumSize(300, 40);
-  progressDialog->setCancelButton(NULL);
+  progressDialog->setCancelButton(nullptr);
   progressDialog->show();
 }
 
@@ -228,7 +210,7 @@ void ProgressDialog::updateProgress(float progress, const QString &stepString) {
 void ProgressDialog::hideProgressDialog() {
   progressDialog->close();
   delete progressDialog;
-  progressDialog = NULL;
+  progressDialog = nullptr;
 }
 
 class VRenderInterface : public QDialog, public Ui::VRenderInterface {
@@ -243,7 +225,7 @@ public:
 // problem.
 static int saveVectorialSnapshot(const QString &fileName, QOpenGLWidget *widget,
                                  const QString &snapshotFormat) {
-  static VRenderInterface *VRinterface = NULL;
+  static VRenderInterface *VRinterface = nullptr;
 
   if (!VRinterface)
     VRinterface = new VRenderInterface(widget);
@@ -319,7 +301,7 @@ public:
 // Pops-up an image settings dialog box and save to fileName.
 // Returns false in case of problem.
 bool QGLViewer::saveImageSnapshot(const QString &fileName) {
-  static ImageInterface *imageInterface = NULL;
+  static ImageInterface *imageInterface = nullptr;
 
   if (!imageInterface)
     imageInterface = new ImageInterface(this);
@@ -488,7 +470,7 @@ bool QGLViewer::saveImageSnapshot(const QString &fileName) {
   // setCursor(QCursor(Qt::ArrowCursor));
 
   delete tileRegion_;
-  tileRegion_ = NULL;
+  tileRegion_ = nullptr;
 
   if (imageInterface->whiteBackground->isChecked())
     setBackgroundColor(previousBGColor);
@@ -569,8 +551,7 @@ void QGLViewer::saveSnapshot(bool automatic, bool overwrite) {
   if ((automatic) && (snapshotCounter() >= 0)) {
     // In automatic mode, names have a number appended
     const QString baseName = fileInfo.baseName();
-    QString count;
-    count.sprintf("%.04d", snapshotCounter_++);
+    QString count = QString("%1").arg(snapshotCounter_++, 4, 10, QChar('0'));
     QString suffix;
     suffix = fileInfo.suffix();
     if (suffix.isEmpty())
@@ -580,7 +561,7 @@ void QGLViewer::saveSnapshot(bool automatic, bool overwrite) {
 
     if (!overwrite)
       while (fileInfo.exists()) {
-        count.sprintf("%.04d", snapshotCounter_++);
+        count = QString("%1").arg(snapshotCounter_++, 4, 10, QChar('0'));
         fileInfo.setFile(fileInfo.absolutePath() + '/' + baseName + '-' +
                          count + '.' + fileInfo.suffix());
       }
