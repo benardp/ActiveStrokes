@@ -15,6 +15,7 @@ See the COPYING file for details.
 #include <QList>
 #include "GQInclude.h"
 #include "GQVertexBufferSet.h"
+#include "TriMesh.h"
 
 // NPRPrimitive
 
@@ -69,8 +70,9 @@ typedef QHash<QString, NPRDataSource*> NPRDataSourcePointerHash;
 // NPRGeometry
 
 class CdaGeometry;
-class TriMesh;
 class GQShaderRef;
+
+using trimesh::TriMesh;
 
 class NPRGeometry
 {

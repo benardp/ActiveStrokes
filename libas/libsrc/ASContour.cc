@@ -23,6 +23,7 @@ See the COPYING file for details.
 #include <QDebug>
 
 #include <float.h>
+#include <float.h>
 #include <math.h>
 
 #ifdef WIN32
@@ -32,7 +33,10 @@ See the COPYING file for details.
 using std::isinf;
 #endif
 
-#include<QSet>
+#include <QSet>
+
+#include <algorithm>
+#include <random>
 
        dkFloat k_penWidth("Style->Main->Pen width", 2.0);
 static dkBool  k_taperBP("Style->Taper->BP length", false);
@@ -966,7 +970,10 @@ void ASContour::brushPathPairs(QList< QPair<ASBrushVertex*,ASBrushVertex*> > &pa
         }
     }
 
-    std::random_shuffle( pairs.begin(), pairs.end() );
+    std::random_device rd;
+    std::mt19937 g(rd());
+ 
+    std::shuffle( pairs.begin(), pairs.end(), g);
 }
 
 /********************************/
